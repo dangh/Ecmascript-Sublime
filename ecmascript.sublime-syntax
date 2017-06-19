@@ -2865,6 +2865,19 @@ contexts:
       scope: keyword.control.flow.await
 
   ae_STRING_REGEX:
+    - match: '((''){{identifierAllCaps}}(''))|(("){{identifierAllCaps}}("))|((`){{identifierAllCaps}}(`))'
+      scope: string.constant.es
+      captures:
+        1: string.quoted.single.constant.es
+        2: punctuation.definition.string.quoted.single.begin.es
+        3: punctuation.definition.string.quoted.single.end.es
+        4: string.quoted.double.constant.es
+        5: punctuation.definition.string.quoted.double.begin.es
+        6: punctuation.definition.string.quoted.double.end.es
+        7: string.interpolated.constant.es
+        8: punctuation.definition.string.interpolated.begin.es
+        9: punctuation.definition.string.interpolated.end.es
+      set: [ ae_AFTER_VALUE ]
     - match: "'"
       scope: punctuation.definition.string.quoted.single.begin.es
       set: [ ae_AFTER_VALUE, stringSingle_AFTER_OPEN ]
