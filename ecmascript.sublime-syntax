@@ -891,6 +891,7 @@ contexts:
     - include: other_illegal_pop
 
   classDeclaration_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\{))'
       captures:
         1: punctuation.definition.class.body.begin.es
@@ -1163,6 +1164,7 @@ contexts:
     - include: else_pop
 
   constLetVarDeclaration_AFTER_BINDING:
+    - include: ae_FLOWTYPE_ANNOTATION
     - match: '((,))'
       captures:
         1: punctuation.separator.binding-binding.es
