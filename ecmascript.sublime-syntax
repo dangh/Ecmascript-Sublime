@@ -2512,7 +2512,7 @@ contexts:
     # meet the criteria I just gave. On the other hand it’s not a very likely
     # identifier for other things and it’s quickly becoming a common functional
     # language extension. I’m going back and forth on this one still.
-    - match: '(_|R){{idEnd}}'
+    - match: '(_|fp|R){{idEnd}}'
       scope: support.variable.functional-library.es
       set: ae_AFTER_THING
     # JQUERY, ZEPTO, PROTOTYPE & MOOTOOLS; ALSO MAJOR FRAMEWORKS
