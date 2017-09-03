@@ -5,7 +5,7 @@
 	<key>name</key>
 	<string>Class Symbol</string>
 	<key>scope</key>
-	<string>source.es entity.name.method.es</string>
+	<string>source.es entity.name.method</string>
 	<key>settings</key>
 	<dict>
 		<key>showInIndexedSymbolList</key>

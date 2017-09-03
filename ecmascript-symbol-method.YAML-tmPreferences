@@ -4,7 +4,7 @@ uuid: 6689fc91-465c-4ffa-ba31-e79f476f57f7
 
 # CLASS
 scope: >-
-  source.es entity.name.method.es
+  source.es entity.name.method
 settings:
   showInSymbolList: 1
   showInIndexedSymbolList: 1
