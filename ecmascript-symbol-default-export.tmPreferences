@@ -13,7 +13,7 @@
 		<key>showInSymbolList</key>
 		<integer>1</integer>
 		<key>symbolTransformation</key>
-		<string>s/.*/default export/;</string>
+		<string>s/.*/export default/;</string>
 	</dict>
 	<key>uuid</key>
 	<string>539f45e7-67ab-463c-bced-1f521bbcd2dc</string>

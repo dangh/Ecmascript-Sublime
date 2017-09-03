@@ -8,4 +8,4 @@ scope: >-
 settings:
   showInSymbolList: 1
   showInIndexedSymbolList: 0
-  symbolTransformation: s/.*/default export/;
+  symbolTransformation: s/.*/export default/;
