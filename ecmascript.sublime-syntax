@@ -1776,6 +1776,7 @@ contexts:
     - include: ae_PARENTHESIZED
     - include: ae_DO
     - include: ae_JSX
+    - include: ae_FLOWTYPE_ANNOTATION
 
   ae_AFTER_IDENTIFIER:
     - match: '=>'
