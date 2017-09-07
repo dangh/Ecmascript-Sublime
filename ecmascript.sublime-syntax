@@ -5556,11 +5556,29 @@ contexts:
       scope: meta.flowtype keyword.operator.flowtype.optional.js
     - match: ':'
       scope: keyword.operator.flowtype.annotation.js
-      push: ae_FLOWTYPE_TOKEN
+      push:
+        - clear_scopes: true
+        - meta_scope: meta.flowtype
+        # pop after function parameter type
+        - match: '(?=\))'
+          pop: true
+        # pop after function parameter type
+        - match: '(?=,)'
+          pop: true
+        # pop after assignment type
+        - match: '(?==)'
+          pop: true
+        # pop after arrow function return type
+        - match: '(?==>)'
+          pop: true
+        # pop after function return type
+        - match: '(?=\{)'
+          pop: true
+        - match: '{{PLA_anything}}'
+          push: ae_FLOWTYPE_TOKEN
     - include: else_pop
 
   ae_FLOWTYPE_TOKEN:
-    - meta_scope: meta.flowtype.token
     - match: '\?'
       scope: keyword.operator.flowtype.maybe.js
     - match: '((\{))'
@@ -5568,6 +5586,10 @@ contexts:
         1: punctuation.flowtype.object.begin.es
         2: meta.brace.curly.js # ^BS
       set: [ bindingFlow_AFTER_TOKEN, bindingFlow_OBJECT ]
+    - match: '\('
+      push:
+        - match: '\)'
+          pop: true
     - match: \b(?:any|bool|boolean|mixed|number|string|void|null)\b
       scope: constant.other.primitive.flowtype.js
       set: bindingFlow_AFTER_TOKEN
@@ -5579,10 +5601,9 @@ contexts:
       scope: variable.other.flowtype.js
       set: [ bindingFlow_AFTER_TOKEN, bindingFlow_POLYMORPH ]
     - include: ae_FLOWTYPE_ARROW
-    # - include: else_pop
+    - include: else_pop
 
   bindingFlow_AFTER_TOKEN:
-    - meta_scope: meta.flowtype.after_token
     - match: '\|'
       scope: keyword.operator.union.flowtype
       set: ae_FLOWTYPE_TOKEN
@@ -5659,10 +5680,10 @@ contexts:
     - include: other_illegal_pop
 
   flowtype_TYPE_ALIAS:
-    - match: '((type)){{idEnd}}'
-      captures:
-        1: keyword.flowtype.type
-      set: [ ae_FLOWTYPE_AE, ae_FLOWTYPE_TOKEN ]
+    # - match: '((type)){{idEnd}}'
+    #   captures:
+    #     1: keyword.flowtype.type
+    #   set: [ ae_FLOWTYPE_AE, ae_FLOWTYPE_TOKEN ]
     - include: else_pop
 
   ae_FLOWTYPE_AE:
@@ -5670,3 +5691,5 @@ contexts:
       scope: keyword.operator.assignment.flowtype.es
       set: ae_FLOWTYPE_TOKEN
     - include: else_pop
+
+  # ae_FLOWTYPE_parameter_ANNOTATION:
