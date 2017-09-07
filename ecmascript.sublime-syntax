@@ -2098,7 +2098,7 @@ contexts:
     # This will work so long as the => is on the same line as the arguments. An
     # arrow function with a single argument will instead be matched in
     # ae_AFTER_VALUE.
-    - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \)\s*=> )'
+    - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \).*=> )'
       scope: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ARROW_AFTER_PARAMS, parameters ]
     - match: '((async))\s*(\()'
