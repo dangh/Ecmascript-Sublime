@@ -5577,9 +5577,11 @@ contexts:
     - match: '[_$a-zA-Z][$\w]*'
       scope: variable.other.flowtype.js
       set: [ bindingFlow_AFTER_TOKEN, bindingFlow_POLYMORPH ]
+    - include: ae_FLOWTYPE_ARROW
     # - include: else_pop
 
   bindingFlow_AFTER_TOKEN:
+    - meta_scope: meta.flowtype.after_token
     - match: '\|'
       scope: keyword.operator.union.flowtype
       set: ae_FLOWTYPE_TOKEN
@@ -5628,4 +5630,26 @@ contexts:
     - match: ','
       scope: punctuation.flowtype.separator.js
       set: ae_FLOWTYPE_TOKEN
+    - include: other_illegal_pop
+
+  ae_FLOWTYPE_ARROW:
+    # This will work so long as the => is on the same line as the arguments. An
+    # arrow function with a single argument will instead be matched in
+    # ae_AFTER_VALUE.
+    - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \).*=> )'
+      scope: punctuation.definition.parameters.function.arrow.begin.es
+      set: [ bindingFlow_AFTER_TOKEN, ae_FLOWTYPE_ARROW_AFTER_PARAMS, parameters ]
+
+  ae_FLOWTYPE_ARROW_AFTER_PARAMS:
+    - match: '\)'
+      scope: punctuation.definition.parameters.function.arrow.end.es
+      set: [ ae_FLOWTYPE_ARROW_BEFORE_ARROW, ae_FLOWTYPE_ANNOTATION ]
+    # The following might be unreachable in theory, but just to be safe:
+    - include: other_illegal_pop
+
+  ae_FLOWTYPE_ARROW_BEFORE_ARROW:
+    - match: '=>'
+      scope: storage.type.function.arrow.es
+      set: ae_FLOWTYPE_TOKEN
+    # (Likewise)
     - include: other_illegal_pop
