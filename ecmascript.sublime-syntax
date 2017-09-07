@@ -1249,7 +1249,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.function.async.end.es
         2: meta.brace.round.js # ^BS
-      set: asyncDeclaration_BEFORE_BRACE
+      set: [ asyncDeclaration_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   asyncDeclaration_BEFORE_BRACE:
@@ -1288,7 +1288,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.generator.end.es
         2: meta.brace.round.js # ^BS
-      set: generatorDeclaration_BEFORE_BRACE
+      set: [ generatorDeclaration_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   generatorDeclaration_BEFORE_BRACE:
@@ -2111,7 +2111,7 @@ contexts:
   ae_ARROW_AFTER_PARAMS:
     - match: '\)'
       scope: punctuation.definition.parameters.function.arrow.end.es
-      set: ae_ARROW_BEFORE_ARROW
+      set: [ ae_ARROW_BEFORE_ARROW, ae_FLOWTYPE_ANNOTATION ]
     # The following might be unreachable in theory, but just to be safe:
     - include: other_illegal_pop
 
@@ -2144,7 +2144,7 @@ contexts:
   ae_ASYNC_ARROW_AFTER_PARAMS:
     - match: '\)'
       scope: punctuation.definition.parameters.function.async.arrow.end.es
-      set: ae_ASYNC_ARROW_BEFORE_ARROW
+      set: [ ae_ASYNC_ARROW_BEFORE_ARROW, ae_FLOWTYPE_ANNOTATION ]
     # The following might be unreachable in theory, but just to be safe:
     - include: other_illegal_pop
 
@@ -3295,7 +3295,7 @@ contexts:
   ae_NO_IN_ARROW_AFTER_PARAMS:
     - match: '\)'
       scope: punctuation.definition.parameters.function.arrow.end.es
-      set: ae_NO_IN_ARROW_BEFORE_ARROW
+      set: [ ae_NO_IN_ARROW_BEFORE_ARROW, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal_pop
   ae_NO_IN_ARROW_BEFORE_ARROW:
     - match: '=>'
@@ -4157,7 +4157,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.method.end.es
         2: meta.brace.round.js # ^BS
-      set: method_BEFORE_BRACE
+      set: [ method_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   method_BEFORE_BRACE:
@@ -4242,7 +4242,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.method.async.end.es
         2: meta.brace.round.js # ^BS
-      set: asyncMethod_BEFORE_BRACE
+      set: [ asyncMethod_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   asyncMethod_BEFORE_BRACE:
@@ -4484,7 +4484,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.method.generator.end.es
         2: meta.brace.round.js # ^BS
-      set: generatorMethod_BEFORE_BRACE
+      set: [ generatorMethod_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   generatorMethod_BEFORE_BRACE:
@@ -4517,7 +4517,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.constructor.end.es
         2: meta.brace.round.js # ^BS
-      set: constructorMethod_BEFORE_BRACE
+      set: [ constructorMethod_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   constructorMethod_BEFORE_BRACE:
