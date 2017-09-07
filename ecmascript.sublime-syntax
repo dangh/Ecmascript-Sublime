@@ -365,6 +365,7 @@ contexts:
     # EXPRESSION STATEMENT
     # Though expression statements are a subset of possible expressions, the
     # disallowed cases are all captured by previous matches.
+    - include: flowtype_TYPE_ALIAS
     - include: expression
 
   blockStatement:
@@ -5633,23 +5634,39 @@ contexts:
     - include: other_illegal_pop
 
   ae_FLOWTYPE_ARROW:
+    - meta_scope: meta.flowtype.function
     # This will work so long as the => is on the same line as the arguments. An
     # arrow function with a single argument will instead be matched in
     # ae_AFTER_VALUE.
     - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \).*=> )'
-      scope: punctuation.definition.parameters.function.arrow.begin.es
+      scope: punctuation.definition.parameters.function.arrow.begin.flowtype.es
       set: [ bindingFlow_AFTER_TOKEN, ae_FLOWTYPE_ARROW_AFTER_PARAMS, parameters ]
 
   ae_FLOWTYPE_ARROW_AFTER_PARAMS:
+    - meta_scope: meta.flowtype.function
     - match: '\)'
-      scope: punctuation.definition.parameters.function.arrow.end.es
+      scope: punctuation.definition.parameters.function.arrow.end.flowtype.es
       set: [ ae_FLOWTYPE_ARROW_BEFORE_ARROW, ae_FLOWTYPE_ANNOTATION ]
     # The following might be unreachable in theory, but just to be safe:
     - include: other_illegal_pop
 
   ae_FLOWTYPE_ARROW_BEFORE_ARROW:
+    - meta_scope: meta.flowtype.function
     - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_FLOWTYPE_TOKEN
     # (Likewise)
     - include: other_illegal_pop
+
+  flowtype_TYPE_ALIAS:
+    - match: '((type)){{idEnd}}'
+      captures:
+        1: keyword.flowtype.type
+      set: [ ae_FLOWTYPE_AE, ae_FLOWTYPE_TOKEN ]
+    - include: else_pop
+
+  ae_FLOWTYPE_AE:
+    - match: '='
+      scope: keyword.operator.assignment.flowtype.es
+      set: ae_FLOWTYPE_TOKEN
+    - include: else_pop
