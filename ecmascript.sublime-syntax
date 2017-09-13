@@ -1557,6 +1557,10 @@ contexts:
     - include: else_pop
 
   moduleDeclaration_AFTER_IMPORT:
+    - match: '((type)){{idEnd}}'
+      captures:
+        1: storage.type.module.import-type.es
+        2: keyword.operator.module.js # ^BS
     - match: '((\*))'
       captures:
         1: keyword.operator.module.js # ^BS, augmented
