@@ -3041,6 +3041,12 @@ contexts:
     - match: 'new{{idEnd}}'
       scope: keyword.operator.new.es
       set: ae_YIELD_NEW_AFTER_NEW_OPERATOR
+    - match: '(yield)(\s+)(\*){{idEnd}}'
+      captures:
+        1: keyword.control.flow.yield.es
+        2: keyword.control.flow.yield.whitespace.es
+        3: keyword.control.flow.yield.iterate.es
+      set: ae_YIELD_NEW_AFTER_YIELD
     - match: 'yield{{idEnd}}'
       scope: keyword.control.flow.yield.es
       set: ae_YIELD_NEW_AFTER_YIELD
