@@ -7,5 +7,5 @@ scope: >-
   source.es meta.symbol-helper.arrow
 settings:
   showInSymbolList: 1
-  showInIndexedSymbolList: 0
+  showInIndexedSymbolList: 1
   symbolTransformation: s/(.+)/arrow $1/;

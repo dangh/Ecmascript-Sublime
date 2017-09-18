@@ -8,5 +8,5 @@ scope: >-
   source.es meta.symbol-helper.function
 settings:
   showInSymbolList: 1
-  showInIndexedSymbolList: 0
+  showInIndexedSymbolList: 1
   symbolTransformation: s/(.+)/function $1/;

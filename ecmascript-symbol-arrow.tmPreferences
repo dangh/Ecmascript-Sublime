@@ -9,7 +9,7 @@
 	<key>settings</key>
 	<dict>
 		<key>showInIndexedSymbolList</key>
-		<integer>0</integer>
+		<integer>1</integer>
 		<key>showInSymbolList</key>
 		<integer>1</integer>
 		<key>symbolTransformation</key>
