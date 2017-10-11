@@ -2658,7 +2658,7 @@ contexts:
     - match: '&(?!=)'
       scope: keyword.operator.bitwise.logical.and.es
       set: assignmentExpression
-    - match: '\|(?![=\|])'
+    - match: '\|(?![=\|>])'
       scope: keyword.operator.bitwise.logical.or.es
       set: assignmentExpression
     - match: '\^(?!=)'
@@ -2696,6 +2696,10 @@ contexts:
     # BINDING
     - match: '::'
       scope: keyword.operator.bind.es
+      set: assignmentExpression
+    # PIPELINE
+    - match: '\|>'
+      scope: keyword.operator.pipeline.es
       set: assignmentExpression
 
   ae_INFIX_OPS_ASSIGNMENT:
@@ -3637,7 +3641,7 @@ contexts:
     - match: '&(?!=)'
       scope: keyword.operator.bitwise.logical.and.es
       set: assignmentExpression_NO_IN
-    - match: '\|(?![=\|])'
+    - match: '\|(?![=\|>])'
       scope: keyword.operator.bitwise.logical.or.es
       set: assignmentExpression_NO_IN
     - match: '\^(?!=)'
@@ -3669,6 +3673,9 @@ contexts:
       set: assignmentExpression_NO_IN
     - match: '::'
       scope: keyword.operator.bind.es
+      set: assignmentExpression_NO_IN
+    - match: '\|>'
+      scope: keyword.operator.pipeline.es
       set: assignmentExpression_NO_IN
   ae_NO_IN_INFIX_OPS_ASSIGNMENT:
     - match: '=(?!=)'
