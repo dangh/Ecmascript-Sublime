@@ -1566,6 +1566,16 @@ contexts:
         1: punctuation.definition.module-binding.begin.es
         2: meta.brace.curly.js # ^BS
       set: moduleDeclaration_IMPORT_BINDING_AFTER_BRACE
+    - match: '((_|fp|R)){{idEnd}}'
+      captures:
+        1: support.variable.functional-library.es
+        2: variable.other.readwrite.import.es
+      set: moduleDeclaration_IMPORT_AFTER_IDENTIFIER
+    - match: '((\$|angular|Polymer|React(DOM)?)){{idEnd}}'
+      captures:
+        1: support.variable.dom-library.es
+        2: variable.other.readwrite.import.es
+      set: moduleDeclaration_IMPORT_AFTER_IDENTIFIER
     - match: '{{allThreeIDs}}'
       captures:
         1: variable.other.readwrite.import.allCap.es
@@ -1608,6 +1618,16 @@ contexts:
     - include: other_illegal_pop
 
   moduleDeclaration_IMPORT_BINDING_AFTER_AS:
+    - match: '((_|fp|R)){{idEnd}}'
+      captures:
+        1: support.variable.functional-library.es
+        2: variable.other.readwrite.import.es
+      set: moduleDeclaration_BEFORE_FROM
+    - match: '((\$|angular|Polymer|React(DOM)?)){{idEnd}}'
+      captures:
+        1: support.variable.dom-library.es
+        2: variable.other.readwrite.import.es
+      set: moduleDeclaration_BEFORE_FROM
     - match: '{{allThreeIDs}}'
       captures:
         1: variable.other.readwrite.import.allCap.es
