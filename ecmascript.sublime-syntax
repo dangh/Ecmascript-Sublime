@@ -5401,11 +5401,11 @@ contexts:
                   captures:
                     1: entity.name.class.jsx
                     2: keyword.operator.accessor.jsx
-                - match: '{{jsxComponentIdentifier}}'
+                - match: '{{jsxComponentIdentifier}}|{{identifier}}'
                   scope: entity.name.class.jsx
                   pop: true
                 - include: other_illegal
-          - match: '{{jsxComponentIdentifier}}'
+          - match: '{{jsxComponentIdentifier}}|{{identifier}}'
             scope: entity.name.class.jsx
             pop: true
           - match: '{{jsxElementIdentifier}}'
@@ -5420,7 +5420,7 @@ contexts:
       captures:
         1: entity.name.class.jsx
         2: keyword.operator.accessor.jsx
-    - match: '{{jsxComponentIdentifier}}'
+    - match: '{{jsxComponentIdentifier}}|{{identifier}}'
       scope: entity.name.class.jsx
       pop: true
     - include: other_illegal
