@@ -1201,7 +1201,7 @@ contexts:
       captures:
         1: punctuation.definition.parameters.function.end.es
         2: meta.brace.round.js # ^BS
-      set: functionDeclaration_BEFORE_BRACE
+      set: [ functionDeclaration_BEFORE_BRACE, ae_FLOWTYPE_ANNOTATION ]
     - include: other_illegal
 
   functionDeclaration_BEFORE_BRACE:
@@ -1699,7 +1699,7 @@ contexts:
 
   expression:
     - match: '{{PLA_anything}}'
-      set: [ expression_AFTER_AE, assignmentExpression ]
+      set: [ expression_AFTER_AE, ae_FLOWTYPE_ANNOTATION, assignmentExpression ]
 
   expression_AFTER_AE:
     - match: ','
@@ -4968,7 +4968,7 @@ contexts:
       set: [ parameters_AFTER_PARAM, bindingObject_PARAM ]
     - match: '{{identifier}}'
       scope: variable.parameter.es
-      set: parameters_AFTER_PARAM
+      set: [ parameters_AFTER_PARAM, ae_FLOWTYPE_ANNOTATION ]
     - match: '\.{3}(?=\s*\))'
       scope: invalid.illegal.token.es
       pop: true
@@ -4999,7 +4999,7 @@ contexts:
       set: [ parameters_AFTER_REST_PARAM, bindingObject_PARAM ]
     - match: '{{identifier}}'
       scope: variable.parameter.rest.es
-      set: parameters_AFTER_REST_PARAM
+      set: [ parameters_AFTER_REST_PARAM, ae_FLOWTYPE_ANNOTATION ]
     - include: parameters_AFTER_REST_PARAM
 
   parameters_AFTER_REST_PARAM:
@@ -5546,6 +5546,62 @@ contexts:
     - include: string_COMMON_ESCAPES
     - match: '`'
       scope: punctuation.definition.string.interpolated.end.es
+
+# FLOWTYPE EXTENSIONS ##########################################################
+
+  ae_FLOWTYPE_ANNOTATION:
+    - match: '\?'
+      scope: meta.flowtype keyword.operator.flowtype.optional.js
+    - match: ':'
+      scope: keyword.operator.flowtype.annotation.js
+      push: ae_FLOWTYPE_TOKEN
+    - include: else_pop
+
+  ae_FLOWTYPE_TOKEN:
+    - meta_scope: meta.flowtype.token
+    - match: '\?'
+      scope: keyword.operator.flowtype.maybe.js
+    - match: '((\{))'
+      captures:
+        1: punctuation.flowtype.object.begin.es
+        2: meta.brace.curly.js # ^BS
+      set: [ bindingFlow_AFTER_TOKEN, bindingFlow_OBJECT ]
+    - match: \b(?:any|bool|boolean|mixed|number|string|void|null)\b
+      scope: constant.other.primitive.flowtype.js
+      set: bindingFlow_AFTER_TOKEN
+    - match: '(?x) ({{intrinsicConstructors}}){{idEnd}}'
+      captures:
+        1: support.class.builtin.es
+      set: [ bindingFlow_AFTER_TOKEN, bindingFlow_POLYMORPH ]
+    - match: '[_$a-zA-Z][$\w]*'
+      scope: variable.other.flowtype.js
+      set: [ bindingFlow_AFTER_TOKEN, bindingFlow_POLYMORPH ]
+    # - include: else_pop
+
+  bindingFlow_AFTER_TOKEN:
+    - match: '\|'
+      scope: keyword.operator.union.flowtype
+      set: ae_FLOWTYPE_TOKEN
+    - include: else_pop
+
+  bindingFlow_OBJECT:
+    - match: '((\}))'
+      captures:
+        1: punctuation.flowtype.object.end.es
+        2: meta.brace.curly.js # ^BS
+      pop: true
+    - include: other_illegal
+
+  bindingFlow_POLYMORPH:
+    - match: '<'
+      scope: punctuation.flowtype.polymorph.begin.js
+      set: bindingFlow_POLYMORPH_AFTER_BRACKET
+    - include: else_pop
+
+  bindingFlow_POLYMORPH_AFTER_BRACKET:
+    - meta_scope: meta.flowtype.polymorph
+    - match: '>'
+      scope: punctuation.flowtype.polymorph.end.js
       pop: true
     - match: '((\$\{))'
       captures:
@@ -5559,3 +5615,16 @@ contexts:
             pop: true
           - include: other_illegal_pop
         - - include: expression
+    - match: '{{PLA_anything}}'
+      set: [ bindingFlow_POLYMORPH_AFTER_TOKEN, ae_FLOWTYPE_TOKEN ]
+    - include: other_illegal_pop
+
+  bindingFlow_POLYMORPH_AFTER_TOKEN:
+    - meta_scope: meta.flowtype.polymorph
+    - match: '>'
+      scope: punctuation.flowtype.polymorph.end.js
+      pop: true
+    - match: ','
+      scope: punctuation.flowtype.separator.js
+      set: ae_FLOWTYPE_TOKEN
+    - include: other_illegal_pop
