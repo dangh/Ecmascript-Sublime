@@ -1,0 +1,11 @@
+# [PackageDev] target_format: plist, ext: tmPreferences
+name: Variable Symbol
+uuid: 3f4c67b2-78e5-486c-8ad1-2244302ab8db
+
+# GENERATOR
+scope: >-
+  source.es entity.name.type.variable
+settings:
+  showInSymbolList: 1
+  showInIndexedSymbolList: 0
+  symbolTransformation: s/(.+)/variable $1/;

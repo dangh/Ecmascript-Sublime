@@ -1141,11 +1141,12 @@ contexts:
         5: variable.other.readwrite.initCap.es
         6: variable.other.readwrite.es
       set: constLetVarDeclaration_AFTER_BINDING
-    - match: '{{allThreeIDs}}'
+    - match: '({{allThreeIDs}})'
       captures:
-        1: variable.other.readwrite.allCap.es # -BS
-        2: variable.other.readwrite.initCap.es
-        3: variable.other.readwrite.es
+        1: entity.name.type.variable.es
+        2: variable.other.readwrite.allCap.es # -BS
+        3: variable.other.readwrite.initCap.es
+        4: variable.other.readwrite.es
       set: constLetVarDeclaration_AFTER_BINDING
     - match: '((\[))'
       captures:
