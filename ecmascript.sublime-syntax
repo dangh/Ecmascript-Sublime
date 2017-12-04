@@ -1780,10 +1780,11 @@ contexts:
 
   # The ‘thing’ in question is a ‘value’ that is conceivably invocable.
   ae_AFTER_THING:
-    - match: '((\())'
+    - match: '(\?\.)?\s*((\())'
       captures:
-        1: punctuation.definition.arguments.begin.es
-        2: meta.brace.round.js # ^BS
+        1: keyword.operator.optional-chaining.es
+        2: punctuation.definition.arguments.begin.es
+        3: meta.brace.round.js # ^BS
       push: arguments
     - match: '`'
       scope: punctuation.definition.string.interpolated.begin.es # -BS
@@ -1800,6 +1801,16 @@ contexts:
     - match: '\.(?=\s*[\}\)\]])'
       scope: invalid.illegal.token
       pop: true
+    # Optional chaining
+    - match: '(\?\.)\s*((\[))'
+      captures:
+        1: keyword.operator.optional-chaining.es
+        2: punctuation.definition.accessor.begin.es
+        3: meta.brace.square.js # ^BS
+      set: [ ae_AFTER_THING, computedProp_AFTER_AE, assignmentExpression ]
+    - match: '\?\.'
+      scope: keyword.operator.optional-chaining.es
+      set: ae_AFTER_ACCESSOR_OPERATOR
     # Accessor operator
     - match: '\.'
       scope: keyword.operator.accessor.es
@@ -1830,29 +1841,32 @@ contexts:
     - include: else_pop
 
   ae_AFTER_ACCESSOR_OPERATOR:
-    - match: '((({{identifierAllCaps}})))\s*((\())'
+    - match: '((({{identifierAllCaps}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.allCap.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
-    - match: '((({{identifierInitCap}})))\s*((\())'
+    - match: '((({{identifierInitCap}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.initCap.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
-    - match: '((({{identifierName}})))\s*((\())'
+    - match: '((({{identifierName}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: '(((#{{identifierName}})))\s*((\())'
       captures:
@@ -2403,35 +2417,38 @@ contexts:
       set: ae_ASYNC_ARROW_AFTER_ARROW
     - include: ae_IDENTIFIERS_INTRINSIC
     - include: ae_IDENTIFIERS_ENVIRONMENTAL
-    - match: '((({{identifierAllCapsStrict}})))\s*((\())'
+    - match: '((({{identifierAllCapsStrict}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.allCap.es # -BS
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: '{{identifierAllCapsStrict}}'
       scope: variable.other.readwrite.allCap.es # -BS
       set: ae_AFTER_IDENTIFIER
-    - match: '((({{identifierInitCapStrict}})))\s*((\())'
+    - match: '((({{identifierInitCapStrict}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.initCap.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: '{{identifierInitCapStrict}}'
       scope: variable.other.readwrite.initCap.es
       set: ae_AFTER_IDENTIFIER
-    - match: '((({{identifier}})))\s*((\())'
+    - match: '((({{identifier}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: '{{identifier}}'
       scope: variable.other.readwrite.es
@@ -2439,25 +2456,27 @@ contexts:
 
   ae_IDENTIFIERS_LANGUAGE:
     # THIS
-    - match: '(((this)))\s*((\())'
+    - match: '(((this)))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.language.this.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: 'this{{idEnd}}'
       scope: variable.language.this.es
       set: ae_AFTER_THING
     # SUPER
-    - match: '(((super)))\s*((\())'
+    - match: '(((super)))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.language.super.es
         2: meta.function-call # ^BS
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: 'super{{idEnd}}'
       scope: variable.language.super.es
@@ -2498,13 +2517,14 @@ contexts:
       set: ae_AFTER_THING
     # NODE FUNCTIONS
     # Or function, rather. This may also be a useful scope for AMD users.
-    - match: '(((require)))\s*((\())'
+    - match: '(((require)))\s*(\?\.)?\s*((\())'
       captures:
         1: meta.function-call # ^BS
         2: meta.invocation.es
         3: support.function.node.require.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     # NODE OBJECTS
     # Omitted ‘root’ intentionally (identifier too common). ‘require’ makes a
@@ -2577,13 +2597,14 @@ contexts:
     # FUNCTIONS
     # The timeout-related functions are also not technically intrinsic but are
     # included here as ‘de facto’ intrinsic as well.
-    - match: '(?x) ((( {{intrinsicFunctions}} )))\s*((\())'
+    - match: '(?x) ((( {{intrinsicFunctions}} )))\s*(\?\.)?\s*((\())'
       captures:
         1: meta.function-call # ^BS
         2: meta.invocation.es
         3: support.function.builtin.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js # ^BS
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js # ^BS
       set: [ ae_AFTER_THING, arguments ]
     - match: '(?x) ({{intrinsicFunctions}}){{idEnd}}'
       scope: support.function.builtin.es
@@ -2985,11 +3006,11 @@ contexts:
     - match: >-
         (?x)
           (new) \s+
-          (?: ({{identifier}}) (\.) )
-          (?: ({{identifier}}) (\.)
-            (?: ({{identifier}}) (\.)
+          (?: ({{identifier}}) (\.)|(\?\.) )
+          (?: ({{identifier}}) (\.)|(\?\.)
+            (?: ({{identifier}}) (\.)|(\?\.)
               (?:
-                ({{identifier}}) (\.)
+                ({{identifier}}) (\.)|(\?\.)
               )?
             )?
           )?
@@ -2998,15 +3019,19 @@ contexts:
         1: keyword.operator.new.es
         2: variable.other.readwrite.es
         3: keyword.operator.accessor.es
-        4: variable.other.readwrite.es
-        5: keyword.operator.accessor.es
-        6: variable.other.readwrite.es
-        7: keyword.operator.accessor.es
+        4: keyword.operator.optional-chaining.es
+        5: variable.other.readwrite.es
+        6: keyword.operator.accessor.es
+        7: keyword.operator.optional-chaining.es
         8: variable.other.readwrite.es
         9: keyword.operator.accessor.es
-        10: variable.other.readwrite.es
-        11: meta.instance.constructor entity.name.type.new # ^BS, augmented
-        12: meta.instantiation.es
+        10: keyword.operator.optional-chaining.es
+        11: variable.other.readwrite.es
+        12: keyword.operator.accessor.es
+        13: keyword.operator.optional-chaining.es
+        14: variable.other.readwrite.es
+        15: meta.instance.constructor entity.name.type.new # ^BS, augmented
+        16: meta.instantiation.es
       set: ae_AFTER_THING
     - match: '(new)\s*(\.)'
       captures:
@@ -3079,10 +3104,11 @@ contexts:
       set: ae_NO_IN_ARROW_AFTER_ARROW
     - include: ae_NO_IN_AFTER_THING
   ae_NO_IN_AFTER_THING:
-    - match: '((\())'
+    - match: '(\?\.)?\s*((\())'
       captures:
-        1: punctuation.definition.arguments.begin.es
-        2: meta.brace.round.js
+        1: keyword.operator.optional-chaining.es
+        2: punctuation.definition.arguments.begin.es
+        3: meta.brace.round.js
       push: arguments
     - match: '`'
       scope: punctuation.definition.string.interpolated.begin.es
@@ -3091,6 +3117,15 @@ contexts:
     - include: ae_NO_IN_INFIX_OPS_ASSIGNMENT
     - include: ae_NO_IN_AFTER_VALUE
   ae_NO_IN_AFTER_VALUE:
+    - match: '(\?\.)\s*((\[))'
+      captures:
+        1: keyword.operator.optional-chaining.es
+        2: punctuation.definition.accessor.begin.es
+        3: meta.brace.square.js
+      set: [ ae_NO_IN_AFTER_THING, computedProp_AFTER_AE, assignmentExpression_NO_IN ]
+    - match: '\?\.'
+      scope: keyword.operator.optional-chaining.es
+      set: ae_NO_IN_AFTER_ACCESSOR_OPERATOR
     - match: '\.'
       scope: keyword.operator.accessor.es
       set: ae_NO_IN_AFTER_ACCESSOR_OPERATOR
@@ -3105,29 +3140,32 @@ contexts:
     - include: ae_NO_IN_INFIX_OPS
     - include: else_pop
   ae_NO_IN_AFTER_ACCESSOR_OPERATOR:
-    - match: '((({{identifierAllCaps}})))\s*((\())'
+    - match: '((({{identifierAllCaps}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.allCap.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
-    - match: '((({{identifierInitCap}})))\s*((\())'
+    - match: '((({{identifierInitCap}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.initCap.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
-    - match: '((({{identifierName}})))\s*((\())'
+    - match: '((({{identifierName}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.property.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '(((#{{identifierName}})))\s*((\())'
       captures:
@@ -3402,58 +3440,63 @@ contexts:
       set: ae_NO_IN_ARROW_AFTER_ARROW
     - include: ae_NO_IN_IDENTIFIERS_INTRINSIC
     - include: ae_NO_IN_IDENTIFIERS_ENVIRONMENTAL
-    - match: '((({{identifierAllCapsStrict}})))\s*((\())'
+    - match: '((({{identifierAllCapsStrict}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.allCap.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '{{identifierAllCapsStrict}}'
       scope: variable.other.readwrite.allCap.es
       set: ae_NO_IN_AFTER_IDENTIFIER
-    - match: '((({{identifierInitCapStrict}})))\s*((\())'
+    - match: '((({{identifierInitCapStrict}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.initCap.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '{{identifierInitCapStrict}}'
       scope: variable.other.readwrite.initCap.es
       set: ae_NO_IN_AFTER_IDENTIFIER
-    - match: '((({{identifier}})))\s*((\())'
+    - match: '((({{identifier}})))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.other.readwrite.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '{{identifier}}'
       scope: variable.other.readwrite.es
       set: ae_NO_IN_AFTER_IDENTIFIER
   ae_NO_IN_IDENTIFIERS_LANGUAGE:
-    - match: '(((this)))\s*((\())'
+    - match: '(((this)))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.language.this.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: 'this{{idEnd}}'
       scope: variable.language.this.es
       set: ae_NO_IN_AFTER_THING
-    - match: '(((super)))\s*((\())'
+    - match: '(((super)))\s*(\?\.)?\s*((\())'
       captures:
         1: variable.language.super.es
         2: meta.function-call
         3: meta.invocation.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: 'super{{idEnd}}'
       scope: variable.language.super.es
@@ -3487,13 +3530,14 @@ contexts:
       captures:
         1: support.class.node.es
       set: ae_NO_IN_AFTER_THING
-    - match: '(((require)))\s*((\())'
+    - match: '(((require)))\s*(\?\.)?\s*((\())'
       captures:
         1: meta.function-call
         2: meta.invocation.es
         3: support.function.node.require.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '(global|GLOBAL|process|__(?:dir|file)name|module|exports|require){{idEnd}}'
       scope: support.variable.node.es
@@ -3525,13 +3569,14 @@ contexts:
     - match: '(?:console|Intl|JSON|Math|SIMD){{idEnd}}'
       scope: support.variable.builtin.es
       set: ae_NO_IN_AFTER_THING
-    - match: '(?x) ((( {{intrinsicFunctions}} )))\s*((\())'
+    - match: '(?x) ((( {{intrinsicFunctions}} )))\s*(\?\.)?\s*((\())'
       captures:
         1: meta.function-call
         2: meta.invocation.es
         3: support.function.builtin.es
-        4: punctuation.definition.arguments.begin.es
-        5: meta.brace.round.js
+        4: keyword.operator.optional-chaining.es
+        5: punctuation.definition.arguments.begin.es
+        6: meta.brace.round.js
       set: [ ae_NO_IN_AFTER_THING, arguments ]
     - match: '(?x) ({{intrinsicFunctions}}){{idEnd}}'
       scope: support.function.builtin.es
@@ -3808,11 +3853,11 @@ contexts:
     - match: >-
         (?x)
           (new) \s+
-          (?: ({{identifier}}) (\.) )
-          (?: ({{identifier}}) (\.)
-            (?: ({{identifier}}) (\.)
+          (?: ({{identifier}}) (\.)(\?\.) )
+          (?: ({{identifier}}) (\.)(\?\.)
+            (?: ({{identifier}}) (\.)(\?\.)
               (?:
-                ({{identifier}}) (\.)
+                ({{identifier}}) (\.)(\?\.)
               )?
             )?
           )?
@@ -3821,15 +3866,19 @@ contexts:
         1: keyword.operator.new.es
         2: variable.other.readwrite.es
         3: keyword.operator.accessor.es
-        4: variable.other.readwrite.es
-        5: keyword.operator.accessor.es
-        6: variable.other.readwrite.es
-        7: keyword.operator.accessor.es
+        4: keyword.operator.optional-chaining.es
+        5: variable.other.readwrite.es
+        6: keyword.operator.accessor.es
+        7: keyword.operator.optional-chaining.es
         8: variable.other.readwrite.es
         9: keyword.operator.accessor.es
-        10: variable.other.readwrite.es
-        11: meta.instance.constructor entity.name.type.new
-        12: meta.instantiation.es
+        10: keyword.operator.optional-chaining.es
+        11: variable.other.readwrite.es
+        12: keyword.operator.accessor.es
+        13: keyword.operator.optional-chaining.es
+        14: variable.other.readwrite.es
+        15: meta.instance.constructor entity.name.type.new
+        16: meta.instantiation.es
       set: ae_NO_IN_AFTER_THING
     - match: '(new)\s*(\.)'
       captures:
