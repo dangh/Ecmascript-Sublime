@@ -1186,7 +1186,7 @@ contexts:
         1: entity.name.function.allCap.es
         2: entity.name.function.initCap.es
         3: entity.name.function.es
-      set: functionDeclaration_AFTER_NAME
+      set: [ functionDeclaration_AFTER_NAME, bindingFlow_POLYMORPH ]
     - include: other_illegal_pop
 
   functionDeclaration_AFTER_NAME:
@@ -5620,39 +5620,34 @@ contexts:
   bindingFlow_POLYMORPH:
     - match: '<'
       scope: punctuation.flowtype.polymorph.begin.js
-      set: bindingFlow_POLYMORPH_AFTER_BRACKET
+      push:
+        - clear_scopes: true
+        - meta_scope: meta.flowtype.polymorph
+        - match: '>'
+          scope: punctuation.flowtype.polymorph.end.js
+          pop: true
+        - match: '{{PLA_anything}}'
+          push: bindingFlow_POLYMORPH_AFTER_BRACKET
     - include: else_pop
 
   bindingFlow_POLYMORPH_AFTER_BRACKET:
-    - meta_scope: meta.flowtype.polymorph
-    - match: '>'
-      scope: punctuation.flowtype.polymorph.end.js
-      pop: true
-    - match: '((\$\{))'
-      captures:
-        1: entity.quasi.element.js punctuation.quasi.element.begin.js # ^BS
-        2: punctuation.definition.string.interpolated.element.begin.es
-      push:
-        - - match: '((\}))'
-            captures:
-              1: entity.quasi.element.js punctuation.quasi.element.end.js # ^BS
-              2: punctuation.definition.string.interpolated.element.end.es
-            pop: true
-          - include: other_illegal_pop
-        - - include: expression
+    # - meta_scope: meta.flowtype.polymorph
+    # - match: '>'
+    #   scope: punctuation.flowtype.polymorph.end.js
+    #   pop: true
     - match: '{{PLA_anything}}'
       set: [ bindingFlow_POLYMORPH_AFTER_TOKEN, ae_FLOWTYPE_TOKEN ]
-    - include: other_illegal_pop
+    - include: else_pop
 
   bindingFlow_POLYMORPH_AFTER_TOKEN:
-    - meta_scope: meta.flowtype.polymorph
-    - match: '>'
-      scope: punctuation.flowtype.polymorph.end.js
-      pop: true
+    # - meta_scope: meta.flowtype.polymorph
+    # - match: '>'
+    #   scope: punctuation.flowtype.polymorph.end.js
+    #   pop: true
     - match: ','
       scope: punctuation.flowtype.separator.js
       set: ae_FLOWTYPE_TOKEN
-    - include: other_illegal_pop
+    - include: else_pop
 
   ae_FLOWTYPE_ARROW:
     - meta_scope: meta.flowtype.function
