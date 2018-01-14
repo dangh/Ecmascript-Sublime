@@ -1189,6 +1189,7 @@ contexts:
     - include: other_illegal_pop
 
   functionDeclaration_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.function.begin.es
@@ -1205,6 +1206,7 @@ contexts:
     - include: other_illegal
 
   functionDeclaration_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.function.body.begin.es
@@ -1237,6 +1239,7 @@ contexts:
     - include: other_illegal_pop
 
   asyncDeclaration_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.function.async.begin.es
@@ -1253,6 +1256,7 @@ contexts:
     - include: other_illegal
 
   asyncDeclaration_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.function.async.body.begin.es
@@ -1276,6 +1280,7 @@ contexts:
     - include: other_illegal_pop
 
   generatorDeclaration_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.generator.begin.es
@@ -1292,6 +1297,7 @@ contexts:
     - include: other_illegal
 
   generatorDeclaration_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.generator.body.begin.es
@@ -2094,7 +2100,7 @@ contexts:
     # This will work so long as the => is on the same line as the arguments. An
     # arrow function with a single argument will instead be matched in
     # ae_AFTER_VALUE.
-    - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \)\s*=> )'
+    - match: '(?x) \( (?= (?<parens> [^\(\)] | \( \g<parens>* \) )* \).*=> )'
       scope: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ARROW_AFTER_PARAMS, parameters ]
     - match: '((async))\s*(\()'
@@ -2112,6 +2118,7 @@ contexts:
     - include: other_illegal_pop
 
   ae_ARROW_BEFORE_ARROW:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_ARROW_AFTER_ARROW
@@ -2145,6 +2152,7 @@ contexts:
     - include: other_illegal_pop
 
   ae_ASYNC_ARROW_BEFORE_ARROW:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '=>'
       scope: storage.type.function.async.arrow.es
       set: ae_ASYNC_ARROW_AFTER_ARROW
@@ -3294,6 +3302,7 @@ contexts:
       set: ae_NO_IN_ARROW_BEFORE_ARROW
     - include: other_illegal_pop
   ae_NO_IN_ARROW_BEFORE_ARROW:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_NO_IN_ARROW_AFTER_ARROW
@@ -4141,6 +4150,7 @@ contexts:
 # OBJECT & CLASS LITERAL METHODS ###############################################
 
   method_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.method.begin.es
@@ -4157,6 +4167,7 @@ contexts:
     - include: other_illegal
 
   method_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.method.body.begin.es
@@ -4226,6 +4237,7 @@ contexts:
     - include: other_illegal_pop
 
   asyncMethod_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.method.async.begin.es
@@ -4242,6 +4254,7 @@ contexts:
     - include: other_illegal
 
   asyncMethod_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.method.async.body.begin.es
@@ -4396,6 +4409,7 @@ contexts:
     - include: other_illegal
 
   accessorMethod_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.accessor.body.begin.es
@@ -4468,6 +4482,7 @@ contexts:
     - include: other_illegal_pop
 
   generatorMethod_AFTER_NAME:
+    - include: ae_FLOWTYPE_POLYMORPH
     - match: '((\())'
       captures:
         1: punctuation.definition.parameters.method.generator.begin.es
@@ -4484,6 +4499,7 @@ contexts:
     - include: other_illegal
 
   generatorMethod_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.method.generator.body.begin.es
@@ -4517,6 +4533,7 @@ contexts:
     - include: other_illegal
 
   constructorMethod_BEFORE_BRACE:
+    - include: ae_FLOWTYPE_ANNOTATION_RETURN
     - match: '((\{))'
       captures:
         1: punctuation.definition.constructor.body.begin.es
@@ -4980,6 +4997,7 @@ contexts:
     - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
+    - include: ae_FLOWTYPE_ANNOTATION
     - include: parameters_AFTER_REST_PARAM
 
   parameters_AFTER_ELLIPSIS:
@@ -4999,6 +5017,7 @@ contexts:
     - include: parameters_AFTER_REST_PARAM
 
   parameters_AFTER_REST_PARAM:
+    - include: ae_FLOWTYPE_ANNOTATION
     - match: '(?=\))'
       pop: true
     - include: other_illegal
@@ -5555,3 +5574,105 @@ contexts:
             pop: true
           - include: other_illegal_pop
         - - include: expression
+
+# FLOWTYPE EXTENSIONS ##########################################################
+
+  ae_FLOWTYPE_POLYMORPH:
+    # http://flowtype.org/blog/2015/03/12/Bounded-Polymorphism.html
+    - match: '<'
+      scope: punctuation.section.flowtype.begin.js
+      push:
+      - meta_scope: meta.flowtype.polymorph.js
+      - match: '>'
+        scope: punctuation.section.flowtype.end.js
+        pop: true
+      - include: ae_FLOWTYPE_TOKENS
+
+  ae_FLOWTYPE_ANNOTATION:
+    - match: (?:(\?)\s*)?(:)
+      captures:
+        1: keyword.operator.flowtype.optional.js
+        2: keyword.operator.flowtype.annotation.js
+      push:
+        - meta_scope: meta.flowtype.annotation.js
+        - include: ae_FLOWTYPE_TOKENS
+        - match: (?=\S)
+          pop: true
+
+  ae_FLOWTYPE_ANNOTATION_RETURN:
+    - match: (?:(\?)\s*)?(:)
+      captures:
+        1: keyword.operator.flowtype.optional.js
+        2: keyword.operator.flowtype.annotation.js
+      push:
+        - meta_scope: meta.flowtype.annotation.js
+        - include: ae_FLOWTYPE_TOKENS_RETURN
+        - match: (?=\S)
+          pop: true
+
+  ae_FLOWTYPE_BRACKETS:
+    - match: '{'
+      scope: punctuation.section.flowtype.begin.js
+      push:
+      - match: '}'
+        scope:  punctuation.section.flowtype.end.js
+        pop: true
+      - include: ae_FLOWTYPE_TOKENS
+
+  ae_FLOWTYPE_IDENTIFIER:
+    - match: \?
+      scope: keyword.operator.flowtype.maybe.js
+    - match: '(?x) ({{intrinsicConstructors}}){{idEnd}}'
+      captures:
+        1: support.class.builtin.es
+    - match: \b(?:any|bool|boolean|mixed|number|string|void|null)\b
+      scope: constant.other.primitive.flowtype.js
+    - match: '[_$a-zA-Z][$\w]*'
+      scope: variable.other.flowtype.js
+
+  ae_FLOWTYPE_TOKENS_RETURN:
+    - match: \s*([|&])\s*
+      scope: meta.flowtype.set.js
+      captures:
+        1: keyword.operator.flowtype.other.js
+    - match: '[*:?&|.]|\.\.\.|\b(typeof)\b'
+      scope: keyword.operator.flowtype.other.js
+    - match: '<'
+      scope: punctuation.section.flowtype.begin.js
+      push:
+      - match: '>'
+        scope: punctuation.section.flowtype.end.js
+        pop: true
+      - include: ae_FLOWTYPE_TOKENS
+    - match: \[
+      scope: punctuation.section.flowtype.begin.js
+      push:
+      - match: \]
+        scope: punctuation.section.flowtype.end.js
+        pop: true
+      - include: ae_FLOWTYPE_TOKENS
+    - match: \(
+      scope: punctuation.section.flowtype.begin.js
+      push:
+      - match: \)
+        scope: punctuation.section.flowtype.end.js
+        pop: true
+      - include: ae_FLOWTYPE_TOKENS
+    - match: '=>'
+      scope: keyword.operator.flowtype.js
+      push:
+      - meta_scope: meta.flowtype.function.js
+      - match: (?<=}|[_$a-zA-Z])
+        pop: true
+      - include: ae_FLOWTYPE_BRACKETS
+      - include: ae_FLOWTYPE_IDENTIFIER
+    - include: ae_FLOWTYPE_IDENTIFIER
+    - include: ae_STRING_REGEX
+
+  ae_FLOWTYPE_TOKENS:
+    - include: ae_FLOWTYPE_TOKENS_RETURN
+    - match: (?=\s*{)
+      push:
+        - match: (?<=})
+          pop: true
+        - include: ae_FLOWTYPE_BRACKETS
