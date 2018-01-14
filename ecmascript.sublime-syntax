@@ -3905,31 +3905,24 @@ contexts:
         1: keyword.generator.asterisk.js # ^BS
         2: storage.modifier.generator.asterisk.method.es
       set: [ literalObject_AFTER_AE, generatorMethod_AFTER_ASTERISK ]
-    - match: '((get))\s*((:))'
+    - match: '((get|set|async))\s*((:))'
       captures:
         1: constant.other.object.key.js string.unquoted.label.js # ^BS
         2: variable.other.readwrite.property.object-literal.es
         3: constant.other.object.key.js # ^BS
         4: punctuation.separator.key-value.es
       set: [ literalObject_AFTER_AE, assignmentExpression ]
-    - match: '((get))(?!\s*\(){{idEnd}}'
+    - match: '((get))(?=\s*(\w|\[)){{idEnd}}'
       captures:
         1: storage.type.accessor.js # ^BS
         2: storage.modifier.accessor.get.es
       set: [ literalObject_AFTER_AE, accessorMethod_AFTER_GET ]
-    - match: '((set))\s*((:))'
-      captures:
-        1: constant.other.object.key.js string.unquoted.label.js # ^BS
-        2: variable.other.readwrite.property.object-literal.es
-        3: constant.other.object.key.js # ^BS
-        4: punctuation.separator.key-value.es
-      set: [ literalObject_AFTER_AE, assignmentExpression ]
-    - match: '((set))(?!\s*\(){{idEnd}}'
+    - match: '((set))(?=\s*(\w|\[)){{idEnd}}'
       captures:
         1: storage.type.accessor.js # ^BS
         2: storage.modifier.accessor.set.es
       set: [ literalObject_AFTER_AE, accessorMethod_AFTER_SET ]
-    - match: '((async)){{idEnd}}(?!\s*:)'
+    - match: '((async)){{idEnd}}(?!\s*[:,}\n])'
       captures:
         1: storage.type.js # ^BS
         2: storage.modifier.async.es
