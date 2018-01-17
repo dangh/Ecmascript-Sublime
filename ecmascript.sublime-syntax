@@ -71,7 +71,7 @@ variables:
       [^\$_‍‍{{ID_Continue}}] )
       (?<![{{ID_Continue}}])
       {{identifierInitCap}}
-  identifierAllCaps: '(?:[\p{Lu}\d_]{2,}|\p{Lu}){{idEnd}}'
+  identifierAllCaps: '(?:[\p{Lu}\d_]{2,}|\p{Lu}){2}{{idEnd}}'
   identifierAllCapsStrict: >-
     (?x)
       (?! (?:{{reservedWords}})
