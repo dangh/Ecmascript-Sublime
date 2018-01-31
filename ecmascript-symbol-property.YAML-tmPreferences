@@ -1,0 +1,11 @@
+# [PackageDev] target_format: plist, ext: tmPreferences
+name: Property Symbol
+uuid: 6689fc91-465c-4ffa-ba31-e79f476f57f8
+
+# CLASS
+scope: >-
+  source.es variable.other.readwrite.property.object-literal.allCap
+settings:
+  showInSymbolList: 1
+  showInIndexedSymbolList: 0
+  symbolTransformation: s/(.+)/property $1/;
