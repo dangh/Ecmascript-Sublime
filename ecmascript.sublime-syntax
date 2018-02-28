@@ -1557,8 +1557,11 @@ contexts:
         1: punctuation.definition.module-binding.begin.es
         2: meta.brace.curly.js # ^BS
       set: moduleDeclaration_IMPORT_BINDING_AFTER_BRACE
-    - match: '{{identifier}}'
-      scope: variable.other.readwrite.import.es
+    - match: '{{allThreeIDs}}'
+      captures:
+        1: variable.other.readwrite.import.allCap.es
+        2: variable.other.readwrite.import.initCap.es
+        3: variable.other.readwrite.import.es
       set: moduleDeclaration_IMPORT_AFTER_IDENTIFIER
     - include: moduleDeclaration_BEFORE_SPECIFIER
 
@@ -1596,8 +1599,11 @@ contexts:
     - include: other_illegal_pop
 
   moduleDeclaration_IMPORT_BINDING_AFTER_AS:
-    - match: '{{identifier}}'
-      scope: variable.other.readwrite.import.es
+    - match: '{{allThreeIDs}}'
+      captures:
+        1: variable.other.readwrite.import.allCap.es
+        2: variable.other.readwrite.import.initCap.es
+        3: variable.other.readwrite.import.es
       set: moduleDeclaration_BEFORE_FROM
     - include: other_illegal_pop
 
@@ -1613,14 +1619,20 @@ contexts:
         2: keyword.operator.module.js # ^BS
         3: storage.modifier.module.as.es
       set: moduleDeclaration_IMPORT_BINDING_AFTER_AS_BEFORE_BRACE_CLOSE
-    - match: '{{identifier}}'
-      scope: variable.other.readwrite.import.es
+    - match: '{{allThreeIDs}}'
+      captures:
+        1: variable.other.readwrite.import.allCap.es
+        2: variable.other.readwrite.import.initCap.es
+        3: variable.other.readwrite.import.es
       set: moduleDeclaration_AFTER_IMPORT_BINDING_SPECIFIER_AMBIG
     - include: other_illegal
 
   moduleDeclaration_IMPORT_BINDING_AFTER_AS_BEFORE_BRACE_CLOSE:
-    - match: '{{identifier}}'
-      scope: variable.other.readwrite.import.es
+    - match: '{{allThreeIDs}}'
+      captures:
+        1: variable.other.readwrite.import.allCap.es
+        2: variable.other.readwrite.import.initCap.es
+        3: variable.other.readwrite.import.es
       set: moduleDeclaration_AFTER_IMPORT_BINDING_SPECIFIER
     - include: other_illegal_pop
 
