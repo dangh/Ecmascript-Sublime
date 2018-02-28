@@ -1052,7 +1052,7 @@ contexts:
         3: keyword.generator.asterisk.js # ^BS
         4: storage.modifier.generator.asterisk.method.es
       set: [ classDeclaration_AFTER_BRACE, asyncMethod_AFTER_ASYNC ]
-    - match: '(((?:(#{{identifierName}})|({{identifierName}}))))\s*(=)\s*(((async))\s+)?(?=\((?<parens>[^\(\)]|\(\g<parens>*\))*\)\s*=>)'
+    - match: '(((?:(#{{identifierName}})|({{identifierName}}))))\s*(=)\s*(((async))\s+)?(?=\(?(?<parens>[^\(\)]|\(\g<parens>*\))*\)?\s*=>)'
       captures:
         1: entity.name.function.js # ^BS
         2: meta.symbol-helper.arrow.es
