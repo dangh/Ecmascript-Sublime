@@ -3630,6 +3630,20 @@ contexts:
         5: variable.other.readwrite.property.es
         6: punctuation.definition.parameters.method.begin.es
       set: [ literalObject_AFTER_AE, method_AFTER_PARAMS, parameters ]
+    # ARROW FUNCTION PROPERTIES
+    - match: '((((?:{{allThreeIDs}}))))\s*((:))\s*(((async))\s+)?(?=\(?(?<parens>[^\(\)]|\(\g<parens>*\))*\)?\s*=>)'
+      captures:
+        1: constant.other.object.key.js string.unquoted.label.js # ^BS
+        2: entity.name.function.js # ^BS
+        3: meta.symbol-helper.arrow.es
+        4: variable.other.readwrite.property.object-literal.allCap.es
+        5: variable.other.readwrite.property.object-literal.initCap.es
+        6: variable.other.readwrite.property.object-literal.es
+        7: constant.other.object.key.js # ^BS
+        8: punctuation.separator.key-value.es
+        10: storage.type.js
+        11: storage.modifier.async.expression.es
+      set: [ literalObject_AFTER_AE, assignmentExpression ]
     # NORMAL PROPERTIES
     - match: '({{allThreeIDs}})\s*((:))'
       captures:
