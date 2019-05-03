@@ -1,0 +1,11 @@
+# [PackageDev] target_format: plist, ext: tmPreferences
+name: Entity Symbol
+uuid: 86ff28eb-46d6-47e2-b348-6c03737e24bf
+
+# CLASS
+scope: >-
+  source.es entity.name.type.new,
+  source.js entity.name.type.new
+settings:
+  showInSymbolList: 0
+  showInIndexedSymbolList: 0
