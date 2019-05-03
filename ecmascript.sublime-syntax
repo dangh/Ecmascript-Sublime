@@ -80,6 +80,7 @@ variables:
   identifierPart: '(?:[{{identifierContinueChars}}]|{{unicodeEscape}})'
   identifierStart: '(?:[\p{IDS}$_]|{{unicodeEscape}})'
   allThreeIDs: '({{identifierAllCaps}})|({{identifierInitCap}})|({{identifier}})'
+  allThreeIDsLoose: '({{identifierAllCaps}})|({{identifierInitCap}})|({{identifierName}})'
   unicodeEscape: '\\u(?:\h{4}|\{\h+\})'
   jsxComponentIdentifier: '{{identifierInitCapStrict}}'
   jsxElementIdentifier: '{{identifierName}}(?:-(?:{{identifierPart}})*)*'
@@ -1969,42 +1970,50 @@ contexts:
       captures:
         1: variable.language.proto.es # for compatibility
       set: ae_AFTER_THING
-    - match: '(({{identifierName}}))(?=\s*=\s*async\s+function\b)'
+    - match: '({{allThreeIDsLoose}})(?=\s*=\s*async\s+function\b)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.async.es
+        1: entity.name.method.async.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
       set: ae_AFTER_THING
     - match: '((#{{identifierName}}))(?=\s*=\s*async\s+function\b)'
       captures:
         1: variable.language.private.es
         2: entity.name.method.async.es
       set: ae_AFTER_THING
-    - match: '(({{identifierName}}))(?=\s*=\s*function\s*\*)'
+    - match: '({{allThreeIDsLoose}})(?=\s*=\s*function\s*\*)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.generator.es
+        1: entity.name.method.generator.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
       set: ae_AFTER_THING
     - match: '((#{{identifierName}}))(?=\s*=\s*function\s*\*)'
       captures:
         1: variable.language.private.es
         2: entity.name.method.generator.es
       set: ae_AFTER_THING
-    - match: '(({{identifierName}}))(?=\s*=\s*function\b)'
+    - match: '({{allThreeIDsLoose}})(?=\s*=\s*function\b)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.es
+        1: entity.name.method.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
       set: ae_AFTER_THING
     - match: '((#{{identifierName}}))(?=\s*=\s*function\b)'
       captures:
         1: variable.language.private.es
         2: entity.name.method.es
       set: ae_AFTER_THING
-    - match: '(({{identifierName}}))\s*(=)\s*(\()(?=(?<parens>[^\(\)]|\(\g<parens>*\))*\)\s*=>)'
+    - match: '({{allThreeIDsLoose}})\s*(=)\s*(\()(?=(?<parens>[^\(\)]|\(\g<parens>*\))*\)\s*=>)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.es
-        3: keyword.operator.assignment.es
-        4: punctuation.definition.parameters.function.arrow.begin.es
+        1: entity.name.method.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
+        5: keyword.operator.assignment.es
+        6: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ARROW_AFTER_PARAMS, parameters ]
     - match: '((#{{identifierName}}))\s*(=)\s*(\()(?=(?<parens>[^\(\)]|\(\g<parens>*\))*\)\s*=>)'
       captures:
@@ -2013,13 +2022,15 @@ contexts:
         3: keyword.operator.assignment.es
         4: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ARROW_AFTER_PARAMS, parameters ]
-    - match: '(({{identifierName}}))\s*(=)\s*({{identifier}})\s*(=>)'
+    - match: '({{allThreeIDsLoose}})\s*(=)\s*({{identifier}})\s*(=>)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.es
-        3: keyword.operator.assignment.es
-        4: variable.parameter.es
-        5: storage.type.function.arrow.es
+        1: entity.name.method.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
+        5: keyword.operator.assignment.es
+        6: variable.parameter.es
+        7: storage.type.function.arrow.es
       set: ae_ARROW_AFTER_ARROW
     - match: '((#{{identifierName}}))\s*(=)\s*({{identifier}})\s*(=>)'
       captures:
@@ -2029,15 +2040,17 @@ contexts:
         4: variable.parameter.es
         5: storage.type.function.arrow.es
       set: ae_ARROW_AFTER_ARROW
-    - match: '(({{identifierName}}))\s*(=)\s*((async))\s+({{identifier}})\s*(=>)'
+    - match: '({{allThreeIDsLoose}})\s*(=)\s*((async))\s+({{identifier}})\s*(=>)'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.async.es
-        3: keyword.operator.assignment.es
-        4: storage.type.js
-        5: storage.modifier.async.expression.es
-        6: variable.parameter.es
-        7: storage.type.function.arrow.es
+        1: entity.name.method.async.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
+        5: keyword.operator.assignment.es
+        6: storage.type.js
+        7: storage.modifier.async.expression.es
+        8: variable.parameter.es
+        9: storage.type.function.arrow.es
       set: ae_ASYNC_ARROW_AFTER_ARROW
     - match: '((#{{identifierName}}))\s*(=)\s*((async))\s+({{identifier}})\s*(=>)'
       captures:
@@ -2049,14 +2062,16 @@ contexts:
         6: variable.parameter.es
         7: storage.type.function.arrow.es
       set: ae_ASYNC_ARROW_AFTER_ARROW
-    - match: '(({{identifierName}}))\s*(=)\s*((async))\s*(\()'
+    - match: '({{allThreeIDsLoose}})\s*(=)\s*((async))\s*(\()'
       captures:
-        1: variable.other.readwrite.property.es
-        2: entity.name.method.async.es
-        3: keyword.operator.assignment.es
-        4: storage.type.js # ^BS
-        5: storage.modifier.async.expression.es
-        6: punctuation.definition.parameters.function.arrow.begin.es
+        1: entity.name.method.async.es
+        2: variable.other.readwrite.property.allCap.es
+        3: variable.other.readwrite.property.initCap.es
+        4: variable.other.readwrite.property.es
+        5: keyword.operator.assignment.es
+        6: storage.type.js # ^BS
+        7: storage.modifier.async.expression.es
+        8: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ASYNC_ARROW_AFTER_PARAMS, parameters ]
     - match: '((#{{identifierName}}))\s*(=)\s*((async))\s*(\()'
       captures:
@@ -2067,8 +2082,11 @@ contexts:
         5: storage.modifier.async.expression.es
         6: punctuation.definition.parameters.function.arrow.begin.es
       set: [ ae_ASYNC_ARROW_AFTER_PARAMS, parameters ]
-    - match: '{{identifierName}}'
-      scope: variable.other.readwrite.property.es
+    - match: '{{allThreeIDsLoose}}'
+      captures:
+        1: variable.other.readwrite.property.allCap.es
+        2: variable.other.readwrite.property.initCap.es
+        3: variable.other.readwrite.property.es
       set: ae_AFTER_THING
     - match: '#{{identifierName}}'
       scope: variable.language.private.es
