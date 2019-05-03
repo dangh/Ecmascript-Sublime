@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>name</key>
+	<string>Getter Symbol</string>
+	<key>scope</key>
+	<string>source.es entity.name.accessor.get.es</string>
+	<key>settings</key>
+	<dict>
+		<key>showInIndexedSymbolList</key>
+		<integer>1</integer>
+		<key>showInSymbolList</key>
+		<integer>1</integer>
+		<key>symbolTransformation</key>
+		<string>s/(.+)/get $1/;</string>
+	</dict>
+	<key>uuid</key>
+	<string>1545d38d-6b4d-478e-9225-9dc2a90f6755</string>
+</dict>
+</plist>

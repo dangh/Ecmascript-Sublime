@@ -1,0 +1,11 @@
+# [PackageDev] target_format: plist, ext: tmPreferences
+name: Getter Symbol
+uuid: 1545d38d-6b4d-478e-9225-9dc2a90f6755
+
+# CLASS
+scope: >-
+  source.es entity.name.accessor.get.es
+settings:
+  showInSymbolList: 1
+  showInIndexedSymbolList: 1
+  symbolTransformation: s/(.+)/get $1/;

@@ -1,0 +1,11 @@
+# [PackageDev] target_format: plist, ext: tmPreferences
+name: Setter Symbol
+uuid: 73feda30-4ee7-47b7-91aa-78c1d23b67f5
+
+# CLASS
+scope: >-
+  source.es entity.name.accessor.set.es
+settings:
+  showInSymbolList: 1
+  showInIndexedSymbolList: 1
+  symbolTransformation: s/(.+)/set $1/;
