@@ -11,3 +11,5 @@ contexts:
     - include: scope:source.safe.es.#prototype
   main:
     - include: scope:source.safe.es
+  expression:
+    - include: scope:source.safe.es#expression
