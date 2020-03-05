@@ -157,7 +157,7 @@ contexts:
           set:
             - meta_scope: >-
                 string.unquoted.plain.out.yaml
-                entity.name.context.sublime-syntax
+                entity.name.function.context.sublime-syntax
             - match: '{{_flow_scalar_end_plain_out}}'
               pop: true
   context_content:
@@ -186,13 +186,13 @@ contexts:
         '1': string.unquoted.plain.out.yaml keyword.operator.include.sublime-syntax
         '2': punctuation.separator.key-value.yaml
       push: expect_include
-    - match: '(push|set)\s*(:)(?=\s|$)'
+    - match: '(branch|push|set)\s*(:)(?=\s|$)'
       captures:
         '1': >-
           string.unquoted.plain.out.yaml
           keyword.control.flow.push.sublime-syntax
         '2': punctuation.separator.key-value.yaml
-      push: expect_include_list
+      push: expect_context_list
     - match: '(with_prototype)\s*(:)(?=\s|$)'
       captures:
         '1': >-
@@ -203,7 +203,7 @@ contexts:
       captures:
         '1': string.unquoted.plain.out.yaml keyword.control.flow.pop.sublime-syntax
         '2': punctuation.separator.key-value.yaml
-      push: expect_bool
+      push: expect_bool_or_int
     - match: '(meta_(?:content_)?scope)\s*(:)(?=\s|$)'
       captures:
         '1': >-
@@ -229,8 +229,22 @@ contexts:
           string.unquoted.plain.out.yaml
           storage.modifier.clear-scopes.sublime-syntax
         '2': punctuation.separator.key-value.yaml
+    - match: '(branch_point)\s*(:)(?=\s|$)'
+      captures:
+        '1': >-
+          string.unquoted.plain.out.yaml
+          keyword.declaration.branch-point.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_branch_point
+    - match: '(fail)\s*(:)(?=\s|$)'
+      captures:
+        '1': >-
+          string.unquoted.plain.out.yaml
+          keyword.control.flow.break.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_branch_point_reference
   expect_captures:
-    - meta_content_scope: meta.expect-captures.yaml
+    - meta_content_scope: meta.expect-captures
     - include: comment
     - include: yaml-tags-anchors
     - match: '(\d+)\s*(:)(?=\s|$)'
@@ -279,21 +293,48 @@ contexts:
         - include: yaml-tags-anchors
         - match: .+
           scope: invalid.illegal.expected-comment-or-newline.yaml
+  expect_branch_point:
+    - meta_content_scope: meta.expect-branch-point
+    - include: comment
+    - include: yaml-tags-anchors
+    - match: '(?={{ns_plain_first_plain_out}})'
+      set:
+        - meta_scope: >-
+            meta.branch-point.sublime-syntax string.unquoted.plain.out.yaml
+            entity.name.label.branch-point.sublime-syntax
+        - match: '{{_flow_scalar_end_plain_out}}'
+          pop: true
+    - match: $|(?=\S)
+      pop: true
+  expect_branch_point_reference:
+    - meta_content_scope: meta.expect-branch-point-reference
+    - include: comment
+    - include: yaml-tags-anchors
+    - match: '(?={{ns_plain_first_plain_out}})'
+      set:
+        - meta_scope: >-
+            meta.branch-point-reference.sublime-syntax
+            string.unquoted.plain.out.yaml
+            variable.other.branch-point.sublime-syntax
+        - match: '{{_flow_scalar_end_plain_out}}'
+          pop: true
+    - match: $|(?=\S)
+      pop: true
   expect_include:
-    - meta_content_scope: meta.expect-include
+    - meta_content_scope: meta.expect-context
     - include: comment
     - include: yaml-tags-anchors
     - include: include
-    - match: '{{block_key_lookahead_bol}}'
+    - match: $|(?=\S)
       pop: true
-    - match: (?=\S)
-      pop: true
-  expect_include_list:
-    - meta_content_scope: meta.expect-include-list
+  expect_context_list:
+    - meta_content_scope: meta.expect-context.list
+    - include: comment
+    - include: yaml-tags-anchors
     - match: '\['
       scope: punctuation.definition.array.begin.sublime-syntax
       set:
-        - meta_scope: meta.include-list.sublime-syntax meta.flow-sequence.yaml
+        - meta_scope: meta.context-list.sublime-syntax meta.flow-sequence.yaml
         - match: '\]'
           scope: punctuation.definition.array.end.sublime-syntax
           pop: true
@@ -302,7 +343,41 @@ contexts:
         - include: comment
         - include: yaml-tags-anchors
         - include: include
-    - include: expect_include
+    - match: ^
+      set:
+        - meta_scope: meta.expect-context-list-or-content
+        - include: comment
+        - include: yaml-block-sequence
+        - include: include_anonymous
+        - match: '^([ ]+)(?=-\s*{{plain_scalar_but_not_block_key}})'
+          set:
+            - meta_content_scope: meta.context-list-or-content.sublime-syntax
+            - include: context_list_content
+            - match: '^(?=([ ]+)-)'
+              set:
+                - meta_scope: meta.context-list.sublime-syntax
+                - include: context_list_content
+        - match: $|(?=\S)
+          set: expect_include
+    - match: (?=\S)
+      set: expect_include
+  context_list_content:
+    - include: comment
+    - include: include
+    - include: yaml-block-sequence
+    - include: include_anonymous
+    - match: ^(?!(\s*$|\1-))
+      pop: true
+    - match: \S.+$
+      scope: invalid.illegal.include.sublime-syntax
+  include_anonymous:
+    - match: '^([ ]+)(?=- -)'
+      push:
+        - clear_scopes: 1
+        - meta_content_scope: meta.anonymous-context.sublime-syntax
+        - include: contexts_block
+        - match: ^(?!(\s*$|\1 +))
+          pop: true
   include:
     - match: '{{plain_scalar_but_not_block_key}}'
       push:
@@ -320,7 +395,7 @@ contexts:
             - match: '#'
               scope: punctuation.separator.context-name.sublime-syntax
               set: expect_include
-        - match: '\w((?!\s#|:\s).)+\.sublime-syntax(?=\s*(#|$))'
+        - match: '\w((?!\s#|:\s)[^{{c_flow_indicator}}])+\.sublime-syntax(?=\s*(#|$))'
           scope: support.module.file-path.sublime-syntax
           set:
             - match: '{{_flow_scalar_end_plain_in}}'
@@ -343,8 +418,15 @@ contexts:
     - include: yaml-tags-anchors
     - match: '\b(true|false){{_flow_scalar_end_plain_out}}'
       scope: constant.language.boolean.yaml
+      pop: true
     - match: $
       pop: true
+  expect_bool_or_int:
+    - meta_content_scope: meta.expect-bool-or-int
+    - match: '(?:0|[1-9][0-9_]*){{_flow_scalar_end_plain_out}}'
+      scope: constant.numeric.integer.decimal.yaml
+      pop: true
+    - include: expect_bool
   expect_comment:
     - meta_content_scope: meta.expect-comment
     - include: comment
@@ -497,6 +579,8 @@ contexts:
     - include: 'Oniguruma RegExp.sublime-syntax#quantifiers'
     - match: ''
       pop: true
+  yaml-block-sequence:
+    - include: 'YAML.sublime-syntax#block-sequence'
   yaml-tags-anchors:
     - include: 'YAML.sublime-syntax#property'
 hidden: true

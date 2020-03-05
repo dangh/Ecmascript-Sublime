@@ -25,11 +25,12 @@ variables:
         )
         [ \t]*$                          # followed by any number of tabs or spaces, followed by the end of the line
     )
+  setext_escape: '^(?=\s{0,3}(?:---+|===+)\s*$)'
   block_quote: '(?:[ ]{,3}>(?:.|$))'
   atx_heading: '(?:[#]{1,6}\s*)'
   indented_code_block: '(?:[ ]{4}|\t)'
   list_item: '(?:[ ]{,3}(?=\d+\.|[*+-])\d*([*+.-])\s)'
-  escape: '\\[-`*_#+.!(){}\[\]\\>|]'
+  escape: '\\[-`*_#+.!(){}\[\]\\>|~]'
   backticks: >-
     (?x:
         (`{4})(?![\s`])(?:[^`]+(?=`)|(?!`{4})`+(?!`))+(`{4})(?!`)  # 4 backticks, followed by at least one non whitespace, non backtick character, followed by (less than 4 backticks, or at least one non backtick character) at least once, followed by exactly 4 backticks
@@ -111,8 +112,7 @@ variables:
     )
   fenced_code_block_start: |-
     (?x:
-      [ ]*
-      ([ ]{0,3})   # up to 3 spaces
+      ([ \t]*)
       (
         (`){3,}    #   3 or more backticks
         (?![^`]*`) #   not followed by any more backticks on the same line
@@ -134,7 +134,7 @@ variables:
   code_fence_escape: |-
     (?x:
       ^             # the beginning of the line
-      [ ]*
+      [ \t]*
       (
         \2          # the backtick/tilde combination that opened the code fence
         (?:\3|\4)*  # plus optional additional closing characters
@@ -183,6 +183,11 @@ variables:
       (?i:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)
       (?:\s|$|/?>)
     )
+  ascii_space: '\t\n\f '
+  tag_attribute_name_start: '(?=[^{{ascii_space}}=/>}])'
+  tag_attribute_name_break: '(?=[{{ascii_space}}=/>}])'
+  tag_unquoted_attribute_start: '(?=[^{{ascii_space}}=/>}])'
+  tag_unquoted_attribute_break: '(?=[{{ascii_space}}}]|/?>)'
 contexts:
   main:
     - match: |-
@@ -199,6 +204,7 @@ contexts:
                         pattern will only match stuff matched by the sub-patterns.
       push:
         - meta_scope: meta.block-level.markdown
+        - include: ligatures
         - include: block-quote
         - include: indented-code-block
         - include: atx-heading
@@ -303,42 +309,69 @@ contexts:
         - after-link-title
         - link-title
     - match: '^(?=\S)(?![=-]{3,}\s*$)'
-      push:
-        - meta_scope: meta.paragraph.markdown
-        - match: >-
-            (?x)                         # pop out of this context when one of
-            the following conditions are met:
+      branch_point: heading2-branch
+      branch:
+        - not-heading2
+        - heading2
+  not-paragraph:
+    - match: >-
+        (?x)                         # pop out of this context when one of the
+        following conditions are met:
 
-            ^(?:
-                \s*$                     # the line is blank (or only contains whitespace)
-            |   (?=
-                    {{block_quote}}      # a block quote begins the line
-                |   [ ]{,3}[*+-][ ]      # an unordered list item begins the line
-                |   [ ]{,3}1[.][ ]       # an ordered list item with number "1" begins the line
-                |   \#                   # an ATX heading begins the line
-                |   [ ]{,3}<(            # all types of HTML blocks except type 7 may interrupt a paragraph
-                      {{html_tag_block_end_at_close_tag}}   # 1
-                    | !--                                   # 2
-                    | \?                                    # 3
-                    | ![A-Z]                                # 4
-                    | !\[CDATA\[                            # 5
-                    | {{html_tag_block_end_at_blank_line}}  # 6
-                    )
+        ^(?:
+            \s*$                     # the line is blank (or only contains whitespace)
+        |   (?=
+                {{block_quote}}      # a block quote begins the line
+            |   [ ]{,3}[*+-][ ]      # an unordered list item begins the line
+            |   [ ]{,3}1[.][ ]       # an ordered list item with number "1" begins the line
+            |   \#                   # an ATX heading begins the line
+            |   [ ]{,3}<(            # all types of HTML blocks except type 7 may interrupt a paragraph
+                  {{html_tag_block_end_at_close_tag}}   # 1
+                | !--                                   # 2
+                | \?                                    # 3
+                | ![A-Z]                                # 4
+                | !\[CDATA\[                            # 5
+                | {{html_tag_block_end_at_blank_line}}  # 6
                 )
             )
-          pop: true
-        - include: inline-bold-italic-linebreak
-        - include: 'scope:text.html.basic.nested.es'
-        - match: '^(={3,})(?=[ \t]*$)'
-          scope: markup.heading.1.setext.markdown
-          captures:
-            '1': punctuation.definition.heading.setext.markdown
-          pop: true
-        - match: '^(-{3,})(?=[ \t]*$)'
-          scope: markup.heading.2.setext.markdown
-          captures:
-            '1': punctuation.definition.heading.setext.markdown
-          pop: true
+        )
+      pop: true
+  not-heading2:
+    - include: not-paragraph
+    - match: (?=\S)
+      branch_point: heading1-branch
+      branch:
+        - paragraph
+        - heading1
+    - match: ''
+      pop: true
+  paragraph:
+    - meta_scope: meta.paragraph.markdown
+    - match: '^\s{0,3}===+\s*$'
+      fail: heading1-branch
+    - match: '^\s{0,3}---+\s*$'
+      fail: heading2-branch
+    - include: not-paragraph
+    - include: inline-bold-italic-linebreak
+    - include: 'scope:text.html.basic.nested.es'
+  heading1:
+    - meta_scope: markup.heading.1.markdown
+    - include: inline-bold-italic-linebreak
+    - match: '^[ \t]{0,3}(={3,})(?=[ \t]*$)'
+      captures:
+        '1': >-
+          markup.heading.1.setext.markdown
+          punctuation.definition.heading.setext.markdown
+      pop: true
+  heading2:
+    - meta_scope: markup.heading.2.markdown
+    - include: inline-bold-italic-linebreak
+    - match: '^[ \t]{0,3}(-{3,})(?=[ \t]*$)'
+      captures:
+        '1': >-
+          markup.heading.2.setext.markdown
+          punctuation.definition.heading.setext.markdown
+      pop: true
   link-ref-def:
     - meta_scope: meta.link.reference.def.markdown
     - match: ''
@@ -349,6 +382,9 @@ contexts:
         Markdown will convert this for us. We match it so that the
                         HTML grammar will not mark it up as invalid.
       scope: meta.other.valid-ampersand.markdown
+  ligatures:
+    - match: <=>
+    - match: '<[-=<]'
   block-quote:
     - match: '[ ]{,3}(>)[ ]?'
       comment: |
@@ -422,6 +458,7 @@ contexts:
     - match: '{{indented_code_block}}.*$\n?'
       scope: markup.raw.block.markdown
   bold:
+    - include: ligatures
     - match: (\*\*)(\*)(?=\S)(?!\*)
       captures:
         '1': punctuation.definition.bold.begin.markdown
@@ -429,6 +466,8 @@ contexts:
       push:
         - meta_scope: markup.bold.markdown
         - meta_content_scope: markup.italic.markdown
+        - match: '{{setext_escape}}'
+          pop: true
         - match: >-
             (?x)
                 [ \t]*\*{4,}    # if there are more than 3 its not applicable to be bold or italic
@@ -446,6 +485,8 @@ contexts:
           scope: punctuation.definition.bold.end.markdown
           set:
             - meta_content_scope: markup.italic.markdown
+            - match: '{{setext_escape}}'
+              pop: true
             - match: >-
                 (?x)
                     [ \t]*\*{3,}    # if there are more than 3 its not applicable to be bold or italic
@@ -467,6 +508,8 @@ contexts:
           scope: punctuation.definition.italic.end.markdown
           set:
             - meta_content_scope: markup.bold.markdown
+            - match: '{{setext_escape}}'
+              pop: true
             - match: >-
                 (?x)
                     [ \t]*\*{3,}    # if there are more than 3 its not applicable to be bold or italic
@@ -595,7 +638,7 @@ contexts:
         - include: italic
         - include: bold-italic-trailing
   bracket:
-    - match: '<(?![a-z/?\$!])'
+    - match: '<(?![A-Za-z/?!$])'
       comment: |
         Markdown will convert this for us. We match it so that the
                         HTML grammar will not mark it up as invalid.
@@ -647,6 +690,7 @@ contexts:
       captures:
         '1': meta.image.inline.markdown punctuation.definition.image.begin.markdown
       push:
+        - image-inline-attr
         - image-inline-after-text
         - image-link-text
   image-link-text:
@@ -686,6 +730,15 @@ contexts:
               scope: invalid.illegal.unexpected-whitespace.markdown
             - match: (?=\s*(?!\)))
               push: link-title
+  image-inline-attr:
+    - match: '([ ]*)(\{)(?=[^}]*\})'
+      captures:
+        '1': invalid.illegal.whitespace.markdown
+        '2': punctuation.definition.attributes.begin.markdown
+      set:
+        - meta_scope: meta.image.inline.markdown
+        - include: tag-attributes
+    - include: immediately-pop
   image-ref:
     - match: |-
         (?x:
@@ -703,6 +756,7 @@ contexts:
           meta.image.reference.markdown
           punctuation.definition.image.begin.markdown
       push:
+        - image-ref-attr
         - image-ref-after-text
         - image-ref-text
   image-ref-text:
@@ -719,9 +773,19 @@ contexts:
         '3': punctuation.definition.constant.end.markdown
       scope: meta.image.reference.markdown
       pop: true
+  image-ref-attr:
+    - match: '([ ]*)(\{)(?=[^}]*\})'
+      captures:
+        '1': invalid.illegal.whitespace.markdown
+        '2': punctuation.definition.attributes.begin.markdown
+      set:
+        - meta_scope: meta.image.reference.markdown
+        - include: tag-attributes
+    - include: immediately-pop
   inline:
     - include: escape
     - include: ampersand
+    - include: ligatures
     - include: bracket
     - include: raw
     - include: image-inline
@@ -745,6 +809,8 @@ contexts:
       scope: punctuation.definition.italic.begin.markdown
       push:
         - meta_scope: markup.italic.markdown
+        - match: '{{setext_escape}}'
+          pop: true
         - match: >-
             (?x)
                 [ \t]*\*{4,}   # if there are more than 3 its not applicable to be bold or italic
@@ -764,6 +830,8 @@ contexts:
       scope: punctuation.definition.italic.begin.markdown
       push:
         - meta_scope: markup.italic.markdown
+        - match: '{{setext_escape}}'
+          pop: true
         - match: >-
             (?x)
                 [ \t]*_{4,}   # if there are more than 3 its not applicable to be bold or italic
@@ -793,6 +861,8 @@ contexts:
         - include: bold-italic-trailing
   bold-italic-trailing:
     - include: 'scope:text.html.basic.nested.es'
+    - match: '{{setext_escape}}'
+      pop: true
     - match: ^\s*$\n?
       scope: invalid.illegal.non-terminated.bold-italic.markdown
       pop: true
@@ -855,6 +925,7 @@ contexts:
       captures:
         '1': meta.link.inline.markdown punctuation.definition.link.begin.markdown
       push:
+        - link-inline-attr
         - link-inline-after-text
         - link-inline-link-text
   link-inline-after-text:
@@ -887,6 +958,15 @@ contexts:
               scope: invalid.illegal.unexpected-whitespace.markdown
             - match: (?=\s*(?!\)))
               push: link-title
+  link-inline-attr:
+    - match: '([ ]*)(\{)(?=[^}]*\})'
+      captures:
+        '1': invalid.illegal.whitespace.markdown
+        '2': punctuation.definition.attributes.begin.markdown
+      set:
+        - meta_scope: meta.link.inline.markdown
+        - include: tag-attributes
+    - include: immediately-pop
   link-inline-link-text:
     - meta_content_scope: meta.link.inline.description.markdown
     - include: link-text-allow-image
@@ -910,6 +990,7 @@ contexts:
           meta.link.reference.markdown
           punctuation.definition.link.begin.markdown
       push:
+        - link-ref-attr
         - link-ref-after-text
         - link-ref-link-text
   link-ref-link-text:
@@ -926,6 +1007,15 @@ contexts:
         '3': punctuation.definition.constant.end.markdown
       scope: meta.link.reference.markdown
       pop: true
+  link-ref-attr:
+    - match: '([ ]*)(\{)(?=[^}]*\})'
+      captures:
+        '1': invalid.illegal.whitespace.markdown
+        '2': punctuation.definition.attributes.begin.markdown
+      set:
+        - meta_scope: meta.link.reference.markdown
+        - include: tag-attributes
+    - include: immediately-pop
   link-ref-literal:
     - match: |-
         (?x:
@@ -943,6 +1033,7 @@ contexts:
           meta.link.reference.literal.markdown
           punctuation.definition.link.begin.markdown
       push:
+        - link-ref-literal-attr
         - link-ref-literal-after-text
         - link-ref-literal-link-text
   link-ref-literal-link-text:
@@ -960,6 +1051,15 @@ contexts:
         '1': punctuation.definition.constant.begin.markdown
         '2': punctuation.definition.constant.end.markdown
       pop: true
+  link-ref-literal-attr:
+    - match: '([ ]*)(\{)(?=[^}]*\})'
+      captures:
+        '1': invalid.illegal.whitespace.markdown
+        '2': punctuation.definition.attributes.begin.markdown
+      set:
+        - meta_scope: meta.link.reference.literal.markdown
+        - include: tag-attributes
+    - include: immediately-pop
   link-ref-footnote:
     - match: |-
         (?x:
@@ -1173,6 +1273,54 @@ contexts:
       captures:
         '1': invalid.illegal.expected-eol.markdown
       pop: true
+  tag-attributes:
+    - match: '\}'
+      scope: punctuation.definition.attributes.end.markdown
+      pop: true
+    - match: '\,'
+      scope: punctuation.separator.mapping.pair.markdown
+    - match: '{{tag_attribute_name_start}}'
+      push:
+        - tag-attr-meta
+        - tag-attr-equals
+        - tag-attr-name
+  tag-attr-name:
+    - meta_scope: entity.other.attribute-name.markdown
+    - match: '{{tag_attribute_name_break}}'
+      pop: true
+    - match: '["''`<]'
+      scope: invalid.illegal.attribute-name.markdown
+  tag-attr-meta:
+    - meta_scope: meta.attribute-with-value.markdown
+    - include: immediately-pop
+  tag-attr-equals:
+    - match: =
+      scope: punctuation.separator.key-value.markdown
+      set: tag-attr-value
+    - include: else-pop
+  tag-attr-value:
+    - match: \"
+      scope: punctuation.definition.string.begin.markdown
+      set:
+        - meta_scope: string.quoted.double.markdown
+        - match: \"
+          scope: punctuation.definition.string.end.markdown
+          pop: true
+    - match: \'
+      scope: punctuation.definition.string.begin.markdown
+      set:
+        - meta_scope: string.quoted.single.markdown
+        - match: \'
+          scope: punctuation.definition.string.end.markdown
+          pop: true
+    - match: '{{tag_unquoted_attribute_start}}'
+      set:
+        - meta_scope: string.unquoted.markdown
+        - match: '{{tag_unquoted_attribute_break}}'
+          pop: true
+        - match: '["''`<]'
+          scope: invalid.illegal.attribute-value.markdown
+    - include: else-pop
   table:
     - match: '^(?={{table_first_row}})'
       push:
@@ -1218,4 +1366,10 @@ contexts:
                       scope: invalid.deprecated.unescaped-backticks.markdown
                     - include: inline
                     - include: 'scope:text.html.basic.nested.es'
+  else-pop:
+    - match: (?=\S)
+      pop: true
+  immediately-pop:
+    - match: ''
+      pop: true
 hidden: true

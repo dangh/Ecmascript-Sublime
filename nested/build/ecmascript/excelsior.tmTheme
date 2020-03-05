@@ -870,19 +870,22 @@ punctuation.definition.tag.begin.xml,
 punctuation.definition.tag.end.html,
 punctuation.definition.tag.end.xml,
 punctuation.separator.namespace.xml,
-punctuation.definition.tag.html,
 punctuation.definition.entity.html,
 punctuation.separator.key-value.html,
 punctuation.definition.string.end.html,
 punctuation.definition.string.begin.html,
-punctuation.separator.key-value.xml,
-punctuation.definition.string.end.xml,
-punctuation.definition.string.begin.xml,
-punctuation.definition.constant.xml,
 punctuation.definition.entity.xml,
-punctuation.definition.group.xml,
+punctuation.definition.group.begin.xml,
 keyword.operator.xml,
-punctuation.separator.xml</string>
+punctuation.definition.group.end.xml,
+punctuation.separator.xml,
+punctuation.definition.storage.xml,
+punctuation.separator.logical.xml,
+punctuation.definition.parameter.xml,
+punctuation.definition.constant.xml,
+punctuation.separator.key-value.xml,
+punctuation.definition.string.begin.xml,
+punctuation.definition.string.end.xml</string>
         <key>settings</key>
         <dict>
           <key>foreground</key>
@@ -899,8 +902,8 @@ entity.other.attribute-name.class.html,
 entity.other.attribute-name.id.html,
 entity.other.attribute-name.style.html,
 entity.other.attribute-name.event.html,
-entity.other.attribute-name.namespace.xml,
 entity.other.attribute-name.xml,
+entity.other.attribute-name.namespace.xml,
 entity.other.attribute-name.localname.xml</string>
         <key>settings</key>
         <dict>
@@ -925,8 +928,6 @@ entity.other.attribute-name.localname.xml</string>
         <key>scope</key>
         <string>entity.name.tag.jsx,
 entity.name.tag.xml.html,
-entity.name.tag.doctype.html,
-entity.name.tag.custom.html,
 entity.name.tag.style.html,
 entity.name.tag.script.html,
 entity.name.tag.structure.any.html,
@@ -936,7 +937,6 @@ entity.name.tag.inline.any.html,
 entity.name.tag.inline.form.html,
 entity.name.tag.inline.a.html,
 entity.name.tag.inline.table.html,
-entity.name.tag.other.html,
 entity.name.tag.xml,
 entity.name.tag.namespace.xml,
 entity.name.tag.localname.xml</string>
@@ -951,7 +951,6 @@ entity.name.tag.localname.xml</string>
         <string>JSX Text</string>
         <key>scope</key>
         <string>string.text.jsx,
-string.quoted.double.doctype.identifiers-and-DTDs.html,
 string.quoted.double.html,
 string.quoted.single.html,
 string.quoted.double.xml,
