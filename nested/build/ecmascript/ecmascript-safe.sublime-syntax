@@ -142,7 +142,7 @@ variables:
 contexts:
   main:
     - meta_include_prototype: false
-    - match: '^(\#\!)(.*)'
+    - match: ^(\#\!)(.*)
       scope: comment.line.shebang.es
       captures:
         '1': punctuation.definition.comment.begin.es
@@ -224,7 +224,7 @@ contexts:
       scope: comment.line.todo.es
   merge_conflict_our_changes:
     - meta_scope: invalid.merge-conflict.our-changes
-    - match: =======\n
+    - match: '=======\n'
       scope: invalid.merge-conflict.delimiter.separator
       set: merge_conflict_their_changes
   merge_conflict_their_changes:
@@ -896,7 +896,7 @@ contexts:
     - match: ;
       scope: punctuation.terminator.property.es
       pop: true
-    - match: =
+    - match: '='
       scope: punctuation.separator.key-value.es
       set:
         - - match: ;
@@ -969,7 +969,7 @@ contexts:
             scope: punctuation.terminator.property.es
             pop: true
           - include: else_pop
-        - - match: =
+        - - match: '='
             scope: punctuation.separator.key-value.es
             set: assignmentExpression
           - match: '{{PLA_anything}}'
@@ -1147,12 +1147,12 @@ contexts:
         '1': punctuation.separator.binding-binding.es
         '2': meta.delimiter.comma.js
       set: constLetVarDeclaration_AFTER_WORD
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.es
       push: assignmentExpression
     - include: else_pop
   constLetVarDeclaration_AFTER_BINDING_PATTERN:
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.es
       set:
         - constLetVarDeclaration_AFTER_BINDING
@@ -1678,7 +1678,7 @@ contexts:
     - include: ae_PARENTHESIZED
     - include: ae_DO
   ae_AFTER_IDENTIFIER:
-    - match: =>
+    - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_ARROW_AFTER_ARROW
     - include: ae_AFTER_THING
@@ -1938,7 +1938,7 @@ contexts:
       set: ae_ARROW_BEFORE_ARROW
     - include: other_illegal_pop
   ae_ARROW_BEFORE_ARROW:
-    - match: =>
+    - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_ARROW_AFTER_ARROW
     - include: other_illegal_pop
@@ -1965,7 +1965,7 @@ contexts:
       set: ae_ASYNC_ARROW_BEFORE_ARROW
     - include: other_illegal_pop
   ae_ASYNC_ARROW_BEFORE_ARROW:
-    - match: =>
+    - match: '=>'
       scope: storage.type.function.async.arrow.es
       set: ae_ASYNC_ARROW_AFTER_ARROW
     - include: other_illegal_pop
@@ -2311,10 +2311,10 @@ contexts:
     - match: '%(?!=)'
       scope: keyword.operator.arithmetic.modulo.es
       set: assignmentExpression
-    - match: ===
+    - match: '==='
       scope: keyword.operator.comparison.equality.strict.es
       set: assignmentExpression
-    - match: ==
+    - match: '=='
       scope: keyword.operator.comparison.equality.coercive.es
       set: assignmentExpression
     - match: '!=='
@@ -2372,7 +2372,7 @@ contexts:
       scope: keyword.operator.bind.es
       set: assignmentExpression
   ae_INFIX_OPS_ASSIGNMENT:
-    - match: =(?!=)
+    - match: '=(?!=)'
       scope: keyword.operator.assignment.es
       set: assignmentExpression
     - match: \+=
@@ -2498,7 +2498,7 @@ contexts:
         - ae_OBJECT_ARRAY_LITERAL_END
         - literalArray_OPEN
   ae_OBJECT_ARRAY_LITERAL_END:
-    - match: =(?!=)
+    - match: '=(?!=)'
       scope: keyword.operator.assignment.es
       set: assignmentExpression
     - include: ae_AFTER_VALUE
@@ -2681,7 +2681,7 @@ contexts:
     - include: ae_NO_IN_PARENTHESIZED
     - include: ae_NO_IN_DO
   ae_NO_IN_AFTER_IDENTIFIER:
-    - match: =>
+    - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_NO_IN_ARROW_AFTER_ARROW
     - include: ae_NO_IN_AFTER_THING
@@ -2804,7 +2804,7 @@ contexts:
       set: ae_NO_IN_ARROW_BEFORE_ARROW
     - include: other_illegal_pop
   ae_NO_IN_ARROW_BEFORE_ARROW:
-    - match: =>
+    - match: '=>'
       scope: storage.type.function.arrow.es
       set: ae_NO_IN_ARROW_AFTER_ARROW
     - include: other_illegal_pop
@@ -3051,10 +3051,10 @@ contexts:
     - match: '%(?!=)'
       scope: keyword.operator.arithmetic.modulo.es
       set: assignmentExpression_NO_IN
-    - match: ===
+    - match: '==='
       scope: keyword.operator.comparison.equality.strict.es
       set: assignmentExpression_NO_IN
-    - match: ==
+    - match: '=='
       scope: keyword.operator.comparison.equality.coercive.es
       set: assignmentExpression_NO_IN
     - match: '!=='
@@ -3106,7 +3106,7 @@ contexts:
       scope: keyword.operator.bind.es
       set: assignmentExpression_NO_IN
   ae_NO_IN_INFIX_OPS_ASSIGNMENT:
-    - match: =(?!=)
+    - match: '=(?!=)'
       scope: keyword.operator.assignment.es
       set: assignmentExpression_NO_IN
     - match: \+=
@@ -3232,7 +3232,7 @@ contexts:
         - ae_NO_IN_OBJECT_ARRAY_LITERAL_END
         - literalArray_OPEN
   ae_NO_IN_OBJECT_ARRAY_LITERAL_END:
-    - match: =(?!=)
+    - match: '=(?!=)'
       scope: keyword.operator.assignment.es
       set: assignmentExpression_NO_IN
     - include: ae_NO_IN_AFTER_VALUE
@@ -3442,6 +3442,15 @@ contexts:
       set:
         - literalObject_AFTER_AE
         - accessorMethod_AFTER_SET
+    - match: '((async))\s*((:))'
+      captures:
+        '1': constant.other.object.key.js string.unquoted.label.js
+        '2': variable.other.readwrite.property.object-literal.es
+        '3': constant.other.object.key.js
+        '4': punctuation.separator.key-value.es
+      set:
+        - literalObject_AFTER_AE
+        - assignmentExpression
     - match: '((async)){{idEnd}}(?:((\s*\*))?|(?!\s*:))'
       captures:
         '1': storage.type.js
@@ -4207,7 +4216,7 @@ contexts:
         '1': punctuation.separator.array-element.binding.es
         '2': meta.separator.comma.js
       set: bindingArray
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
     - include: other_illegal
@@ -4342,7 +4351,7 @@ contexts:
         '1': punctuation.separator.object-member.binding.es
         '2': meta.separator.comma.js
       set: bindingObject
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
   bindingObject_AFTER_ELLIPSIS:
@@ -4405,7 +4414,7 @@ contexts:
         '1': punctuation.separator.array-element.binding.parameter.es
         '2': meta.separator.comma.js
       set: bindingArray_PARAM
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
     - include: other_illegal
@@ -4536,7 +4545,7 @@ contexts:
         '1': punctuation.separator.object-member.binding.parameter.es
         '2': meta.delimiter.comma.js
       set: bindingObject_PARAM
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
   bindingObject_PARAM_AFTER_ELLIPSIS:
@@ -4614,7 +4623,7 @@ contexts:
     - match: ','
       scope: punctuation.separator.parameter.es
       set: parameters
-    - match: =
+    - match: '='
       scope: keyword.operator.assignment.conditional.default.es
       push: assignmentExpression
     - include: parameters_AFTER_REST_PARAM
