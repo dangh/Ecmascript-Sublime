@@ -3631,6 +3631,13 @@ contexts:
         1: storage.type.accessor.js # ^BS
         2: storage.modifier.accessor.set.es
       set: [ literalObject_AFTER_AE, accessorMethod_AFTER_SET ]
+    - match: '((async))\s*((:))'
+      captures:
+        1: constant.other.object.key.js string.unquoted.label.js # ^BS
+        2: variable.other.readwrite.property.object-literal.es
+        3: constant.other.object.key.js # ^BS
+        4: punctuation.separator.key-value.es
+      set: [ literalObject_AFTER_AE, assignmentExpression ]
     - match: '((async)){{idEnd}}(?:((\s*\*))?|(?!\s*:))'
       captures:
         1: storage.type.js # ^BS
