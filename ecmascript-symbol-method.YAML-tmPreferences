@@ -9,4 +9,4 @@ scope: >-
 settings:
   showInSymbolList: 1
   showInIndexedSymbolList: 1
-  symbolTransformation: s/(.+)/method $1/;
+  symbolTransformation: s/(.+)/method $1\(\)/;

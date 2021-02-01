@@ -13,7 +13,7 @@
 		<key>showInSymbolList</key>
 		<integer>1</integer>
 		<key>symbolTransformation</key>
-		<string>s/(.+)/method $1/;</string>
+		<string>s/(.+)/method $1\(\)/;</string>
 	</dict>
 	<key>uuid</key>
 	<string>6689fc91-465c-4ffa-ba31-e79f476f57f7</string>

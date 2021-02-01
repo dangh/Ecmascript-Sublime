@@ -11,4 +11,4 @@ scope: >-
 settings:
   showInSymbolList: 1
   showInIndexedSymbolList: 0
-  symbolTransformation: s/(.+)/generator $1/;
+  symbolTransformation: s/(.+)/generator $1\(\)/;

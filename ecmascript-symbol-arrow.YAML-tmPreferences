@@ -9,4 +9,4 @@ scope: >-
 settings:
   showInSymbolList: 1
   showInIndexedSymbolList: 0
-  symbolTransformation: s/(.+)/arrow $1/;
+  symbolTransformation: s/(.+)/arrow $1\(\)/;
