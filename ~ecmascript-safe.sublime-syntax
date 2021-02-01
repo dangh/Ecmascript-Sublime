@@ -8,7 +8,7 @@ scope: source.js
 
 contexts:
   prototype:
-    - include: scope:source.safe.es.#prototype
+    - include: scope:source.safe.es#prototype
   main:
     - include: scope:source.safe.es
   expression:
