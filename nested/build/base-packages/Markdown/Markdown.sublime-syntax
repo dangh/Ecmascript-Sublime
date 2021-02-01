@@ -30,7 +30,7 @@ variables:
   atx_heading: '(?:[#]{1,6}\s*)'
   indented_code_block: '(?:[ ]{4}|\t)'
   list_item: '(?:[ ]{,3}(?=\d+\.|[*+-])\d*([*+.-])\s)'
-  escape: '\\[-`*_#+.!(){}\[\]\\>|~]'
+  escape: '\\[-`*_#+.!(){}\[\]\\>|~<]'
   backticks: >-
     (?x:
         (`{4})(?![\s`])(?:[^`]+(?=`)|(?!`{4})`+(?!`))+(`{4})(?!`)  # 4 backticks, followed by at least one non whitespace, non backtick character, followed by (less than 4 backticks, or at least one non backtick character) at least once, followed by exactly 4 backticks
@@ -189,7 +189,23 @@ variables:
   tag_unquoted_attribute_start: '(?=[^{{ascii_space}}=/>}])'
   tag_unquoted_attribute_break: '(?=[{{ascii_space}}}]|/?>)'
 contexts:
+  file-start:
+    - match: (---)\s*
+      captures:
+        '0': meta.frontmatter.markdown
+        '1': punctuation.section.block.begin.frontmatter.yaml.markdown
+      embed: 'scope:source.yaml'
+      embed_scope: meta.frontmatter.markdown source.yaml.embedded
+      escape: ^(---)\s*$
+      escape_captures:
+        '1': >-
+          meta.frontmatter.markdown
+          punctuation.section.block.end.frontmatter.yaml.markdown
   main:
+    - include: file-start
+    - match: ''
+      set: markdown
+  markdown:
     - match: |-
         (?x)^
         (?=  {{block_quote}}
@@ -204,20 +220,22 @@ contexts:
                         pattern will only match stuff matched by the sub-patterns.
       push:
         - meta_scope: meta.block-level.markdown
-        - include: ligatures
         - include: block-quote
+        - include: ligatures
         - include: indented-code-block
         - include: atx-heading
         - include: thematic-break
         - include: table
         - match: ''
           pop: true
-    - match: '^([ ]{0,3})([*+-])(?=\s)'
+    - match: '^([ ]{0,3})([*+-])( (\[[ xX]\]))?(?=\s)'
       captures:
         '1': markup.list.unnumbered.markdown
         '2': >-
           markup.list.unnumbered.bullet.markdown
           punctuation.definition.list_item.markdown
+        '3': markup.list.unnumbered.markdown
+        '4': constant.language.checkbox.markdown-gfm
       push:
         - meta_content_scope: markup.list.unnumbered.markdown
         - match: ^(?=\S)
@@ -305,8 +323,7 @@ contexts:
         '7': punctuation.definition.link.end.markdown
         '8': markup.underline.link.markdown
       push:
-        - link-ref-def
-        - after-link-title
+        - link-ref-def-expect-end
         - link-title
     - match: '^(?=\S)(?![=-]{3,}\s*$)'
       branch_point: heading2-branch
@@ -357,24 +374,22 @@ contexts:
   heading1:
     - meta_scope: markup.heading.1.markdown
     - include: inline-bold-italic-linebreak
-    - match: '^[ \t]{0,3}(={3,})(?=[ \t]*$)'
+    - match: '^[ \t]{0,3}(={3,})(?=[ \t]*$)(\n?)'
       captures:
         '1': >-
           markup.heading.1.setext.markdown
           punctuation.definition.heading.setext.markdown
+        '2': meta.whitespace.newline.markdown
       pop: true
   heading2:
     - meta_scope: markup.heading.2.markdown
     - include: inline-bold-italic-linebreak
-    - match: '^[ \t]{0,3}(-{3,})(?=[ \t]*$)'
+    - match: '^[ \t]{0,3}(-{3,})(?=[ \t]*$)(\n?)'
       captures:
         '1': >-
           markup.heading.2.setext.markdown
           punctuation.definition.heading.setext.markdown
-      pop: true
-  link-ref-def:
-    - meta_scope: meta.link.reference.def.markdown
-    - match: ''
+        '2': meta.whitespace.newline.markdown
       pop: true
   ampersand:
     - match: '(?!{{html_entity}})&'
@@ -383,8 +398,10 @@ contexts:
                         HTML grammar will not mark it up as invalid.
       scope: meta.other.valid-ampersand.markdown
   ligatures:
-    - match: <=>
-    - match: '<[-=<]'
+    - match: <?(-+|=+)<
+    - match: <(-+|=+)>?
+    - match: '>(-+|=+)[<>]?'
+    - match: <<+|<>|>>+
   block-quote:
     - match: '[ ]{,3}(>)[ ]?'
       comment: |
@@ -661,7 +678,7 @@ contexts:
         - meta_content_scope: entity.name.section.markdown
         - include: atx-heading-terminator
         - include: inline-bold-italic
-    - match: '(##)(?!#)\s*(?=\S)'
+    - match: '(#{2})(?!#)\s*(?=\S)'
       captures:
         '1': punctuation.definition.heading.begin.markdown
       push:
@@ -669,11 +686,35 @@ contexts:
         - meta_content_scope: entity.name.section.markdown
         - include: atx-heading-terminator
         - include: inline-bold-italic
-    - match: '(#{3,6})(?!#)\s*(?=\S)'
+    - match: '(#{3})(?!#)\s*(?=\S)'
       captures:
         '1': punctuation.definition.heading.begin.markdown
       push:
-        - meta_scope: markup.heading.markdown
+        - meta_scope: markup.heading.3.markdown
+        - meta_content_scope: entity.name.section.markdown
+        - include: atx-heading-terminator
+        - include: inline-bold-italic
+    - match: '(#{4})(?!#)\s*(?=\S)'
+      captures:
+        '1': punctuation.definition.heading.begin.markdown
+      push:
+        - meta_scope: markup.heading.4.markdown
+        - meta_content_scope: entity.name.section.markdown
+        - include: atx-heading-terminator
+        - include: inline-bold-italic
+    - match: '(#{5})(?!#)\s*(?=\S)'
+      captures:
+        '1': punctuation.definition.heading.begin.markdown
+      push:
+        - meta_scope: markup.heading.5.markdown
+        - meta_content_scope: entity.name.section.markdown
+        - include: atx-heading-terminator
+        - include: inline-bold-italic
+    - match: '(#{6})(?!#)\s*(?=\S)'
+      captures:
+        '1': punctuation.definition.heading.begin.markdown
+      push:
+        - meta_scope: markup.heading.6.markdown
         - meta_content_scope: entity.name.section.markdown
         - include: atx-heading-terminator
         - include: inline-bold-italic
@@ -1092,12 +1133,14 @@ contexts:
       push:
         - match: ^\s*$
           pop: true
-        - match: '([ ]*)([*+-])(?=\s)'
+        - match: '([ ]*)([*+-])( (\[[ xX]\]))?(?=\s)'
           captures:
             '1': markup.list.unnumbered.markdown
             '2': >-
               markup.list.unnumbered.bullet.markdown
               punctuation.definition.list_item.markdown
+            '3': markup.list.unnumbered.markdown
+            '4': constant.language.checkbox.markdown-gfm
           push:
             - clear_scopes: 1
             - meta_content_scope: markup.list.unnumbered.markdown meta.paragraph.list.markdown
@@ -1113,6 +1156,8 @@ contexts:
             - include: list-content
         - match: \s+
           scope: meta.paragraph.list.markdown
+        - match: '(?=^{{atx_heading}})'
+          pop: true
         - match: (?=\S)
           push: list-content
     - match: (?=\S)
@@ -1161,6 +1206,8 @@ contexts:
           scope: punctuation.definition.raw.end.markdown
           pop: true
         - match: '`+'
+        - match: '^(?={{list_item}})'
+          pop: true
         - match: ^\s*$\n?
           scope: invalid.illegal.non-terminated.raw.markdown
           pop: true
@@ -1216,6 +1263,8 @@ contexts:
       pop: true
     - include: disable-markdown
   link-text:
+    - match: '\b__?(?=[^]_]+\])'
+    - match: '\b\*\*?(?=[^]*]+\])'
     - include: escape
     - include: ampersand
     - include: raw
@@ -1233,46 +1282,42 @@ contexts:
     - include: image-inline
     - include: image-ref
   link-title:
-    - match: \s*(')
-      captures:
-        '1': punctuation.definition.string.begin.markdown
+    - match: \'
+      scope: punctuation.definition.string.begin.markdown
       set:
         - meta_scope: string.other.link.description.title.markdown
         - match: \'
           scope: punctuation.definition.string.end.markdown
           pop: true
-        - match: ^\s*$\n?
-          scope: invalid.illegal.non-terminated.link-title.markdown
-          pop: true
-    - match: \s*(")
-      captures:
-        '1': punctuation.definition.string.begin.markdown
+        - include: non-terminated-link-title
+    - match: \"
+      scope: punctuation.definition.string.begin.markdown
       set:
         - meta_scope: string.other.link.description.title.markdown
         - match: \"
           scope: punctuation.definition.string.end.markdown
           pop: true
-        - match: ^\s*$\n?
-          scope: invalid.illegal.non-terminated.link-title.markdown
-          pop: true
-    - match: \s*(\()
-      captures:
-        '1': punctuation.definition.string.begin.markdown
+        - include: non-terminated-link-title
+    - match: \(
+      scope: punctuation.definition.string.begin.markdown
       set:
         - meta_scope: string.other.link.description.title.markdown
         - match: \)
           scope: punctuation.definition.string.end.markdown
           pop: true
-        - match: ^\s*$\n?
-          scope: invalid.illegal.non-terminated.link-title.markdown
-          pop: true
-    - match: \s*
+        - include: non-terminated-link-title
+    - match: $|(?=\S)
       pop: true
-  after-link-title:
-    - match: (.*)$\n?
-      captures:
-        '1': invalid.illegal.expected-eol.markdown
+  non-terminated-link-title:
+    - match: ^\s*$\n?
+      scope: invalid.illegal.non-terminated.link-title.markdown
       pop: true
+  link-ref-def-expect-end:
+    - meta_scope: meta.link.reference.def.markdown
+    - match: $
+      pop: true
+    - match: \s*\S+
+      scope: invalid.illegal.expected-eol.markdown
   tag-attributes:
     - match: '\}'
       scope: punctuation.definition.attributes.end.markdown

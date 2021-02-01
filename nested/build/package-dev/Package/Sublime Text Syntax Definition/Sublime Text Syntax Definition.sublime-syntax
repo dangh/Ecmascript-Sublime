@@ -78,6 +78,35 @@ contexts:
   comment:
     - include: 'Packages/YAML/YAML.sublime-syntax#comment'
   main:
+    - match: '(name)\s*(:)(?=\s|$)'
+      captures:
+        '1': >-
+          string.unquoted.plain.out.yaml
+          storage.type.display-name.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+    - match: '(scope)\s*(:)(?=\s|$)'
+      captures:
+        '1': string.unquoted.plain.out.yaml storage.type.scope-name.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_scope
+    - match: '(version)\s*(:)(?=\s|$)'
+      captures:
+        '1': string.unquoted.plain.out.yaml storage.type.version.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_int
+    - match: '(hidden)\s*(:)(?=\s|$)'
+      captures:
+        '1': string.unquoted.plain.out.yaml storage.modifier.hidden.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_bool
+    - match: '(extends)\s*(:)(?=\s|$)'
+      captures:
+        '1': string.unquoted.plain.out.yaml storage.type.extends.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+    - match: '((?:file|hidden)_extensions)\s*(:)(?=\s|$)'
+      captures:
+        '1': string.unquoted.plain.out.yaml entity.name.tag.yaml
+        '2': punctuation.separator.key-value.yaml
     - match: '(first_line_match)\s*(:)(?=\s|$)'
       captures:
         '1': >-
@@ -85,13 +114,6 @@ contexts:
           keyword.other.first_line_match.sublime-syntax
         '2': punctuation.separator.key-value.yaml
       push: expect_regexp
-    - match: '(contexts)\s*(:)(?=\s|$)'
-      captures:
-        '1': >-
-          string.unquoted.plain.out.yaml
-          keyword.control.flow.contexts.sublime-syntax
-        '2': punctuation.separator.key-value.yaml
-      push: contexts_block
     - match: '(variables)\s*(:)(?=\s|$)'
       captures:
         '1': >-
@@ -99,20 +121,13 @@ contexts:
           keyword.control.flow.variables.sublime-syntax
         '2': punctuation.separator.key-value.yaml
       push: variables_block
-    - match: '(scope)\s*(:)(?=\s|$)'
+    - match: '(contexts)\s*(:)(?=\s|$)'
       captures:
-        '1': string.unquoted.plain.out.yaml storage.type.scope-name.sublime-syntax
+        '1': >-
+          string.unquoted.plain.out.yaml
+          keyword.control.flow.contexts.sublime-syntax
         '2': punctuation.separator.key-value.yaml
-      push: expect_scope
-    - match: '(file_extensions)\s*(:)(?=\s|$)'
-      captures:
-        '1': string.unquoted.plain.out.yaml entity.name.tag.yaml
-        '2': punctuation.separator.key-value.yaml
-    - match: '(hidden)\s*(:)(?=\s|$)'
-      captures:
-        '1': string.unquoted.plain.out.yaml storage.modifier.hidden.sublime-syntax
-        '2': punctuation.separator.key-value.yaml
-      push: expect_bool
+      push: contexts_block
     - include: comment
     - include: yaml-tags-anchors
     - include: 'scope:source.yaml'
@@ -123,7 +138,7 @@ contexts:
     - match: '^ +{{block_key_lookahead}}'
       push:
         - include: >-
-            Packages/YAML/YAML.sublime-syntax#flow-scalar-plain-out-implicit-type
+            Packages/YAML/YAML.sublime-syntax#flow-scalar-plain-out-implicit-type-12
         - match: ':(?=\s|$)'
           scope: punctuation.separator.mapping.key-value.yaml
           set: expect_regexp
@@ -149,7 +164,7 @@ contexts:
     - match: "^[ \t]+{{block_key_lookahead}}"
       push:
         - include: >-
-            Packages/YAML/YAML.sublime-syntax#flow-scalar-plain-out-implicit-type
+            Packages/YAML/YAML.sublime-syntax#flow-scalar-plain-out-implicit-type-12
         - match: ':(?=\s|$)'
           scope: punctuation.separator.mapping.key-value.yaml
           pop: true
@@ -211,11 +226,18 @@ contexts:
           storage.type.scope-name.meta.sublime-syntax
         '2': punctuation.separator.key-value.yaml
       push: expect_scope
-    - match: '(meta_include_prototype)\s*(:)(?=\s|$)'
+    - match: '((?:meta_include|apply)_prototype)\s*(:)(?=\s|$)'
       captures:
         '1': >-
           string.unquoted.plain.out.yaml
           keyword.control.flow.include-prototype.sublime-syntax
+        '2': punctuation.separator.key-value.yaml
+      push: expect_bool
+    - match: '(meta_(?:append|prepend))\s*(:)(?=\s|$)'
+      captures:
+        '1': >-
+          string.unquoted.plain.out.yaml
+          storage.modifier.context-extension.sublime-syntax
         '2': punctuation.separator.key-value.yaml
       push: expect_bool
     - match: '(comment)\s*(:)(?=\s|$)'
@@ -263,7 +285,7 @@ contexts:
     - match: '(?={{ns_plain_first_plain_out}})'
       set:
         - meta_scope: meta.scope.sublime-syntax string.unquoted.plain.out.yaml
-        - match: '{{_flow_scalar_end_plain_in}}'
+        - match: '{{_flow_scalar_end_plain_out}}'
           set:
             - match: \n?
               scope: meta.scope.sublime-syntax
@@ -412,21 +434,36 @@ contexts:
             - meta_scope: string.unquoted.plain.out.yaml
             - match: '{{_flow_scalar_end_plain_in}}'
               pop: true
+  expect_bool_or_int:
+    - meta_content_scope: meta.expect-bool-or-int
+    - include: comment
+    - include: yaml-tags-anchors
+    - include: expect_bool_value
+    - include: expect_int_value
+    - match: $
+      pop: true
   expect_bool:
     - meta_content_scope: meta.expect-bool
     - include: comment
     - include: yaml-tags-anchors
+    - include: expect_bool_value
+    - match: $
+      pop: true
+  expect_bool_value:
     - match: '\b(true|false){{_flow_scalar_end_plain_out}}'
       scope: constant.language.boolean.yaml
       pop: true
+  expect_int:
+    - meta_content_scope: meta.expect-int
+    - include: comment
+    - include: yaml-tags-anchors
+    - include: expect_int_value
     - match: $
       pop: true
-  expect_bool_or_int:
-    - meta_content_scope: meta.expect-bool-or-int
+  expect_int_value:
     - match: '(?:0|[1-9][0-9_]*){{_flow_scalar_end_plain_out}}'
       scope: constant.numeric.integer.decimal.yaml
       pop: true
-    - include: expect_bool
   expect_comment:
     - meta_content_scope: meta.expect-comment
     - include: comment
