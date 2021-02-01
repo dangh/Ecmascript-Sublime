@@ -211,7 +211,7 @@ module.exports = class syntax {
 		let g_syntax = this.syntax;
 
 		// each context
-		let h_contexts = g_syntax.contexts;
+		let h_contexts = g_syntax.contexts || {};
 		for(let [si_context, z_context] of Object.entries(h_contexts)) {
 			// clean out bad stack changes
 			h_contexts[si_context] = this.clean_context(z_context, [si_context], b_print);
