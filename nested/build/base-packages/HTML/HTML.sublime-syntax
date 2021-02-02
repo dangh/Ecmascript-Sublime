@@ -3,7 +3,7 @@
 name: Ecmascript nested syntax - HTML
 scope: text.html.basic.nested.es
 version: 2
-extends: HTML (Plain).sublime-syntax
+extends: Packages/HTML/HTML (Plain).sublime-syntax
 variables:
   block_tag_name: |-
     (?ix:
